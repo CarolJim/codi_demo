@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Network_Manager</string>
+    <!-- Preferencias -->
+    <string name="prf_wallet_headers">wallet_headers</string>
+</resources>

@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        useLibrary 'org.apache.http.legacy'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+
+        }
+        debug {
+            minifyEnabled true
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+    // Firebase
+    implementation 'com.google.firebase:firebase-perf:15.0.0'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+    // Network Libraries
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+}
