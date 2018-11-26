@@ -1,9 +1,9 @@
-package com.pagatodo.richardsproject.onboarding
+package com.pagatodo.richardsproject.modules.onboarding
 
 import android.app.Activity
 import android.content.Intent
-import com.pagatodo.richardsproject.login.LogIn
-import com.pagatodo.richardsproject.register.Register
+import com.pagatodo.richardsproject.modules.login.LogIn
+import com.pagatodo.richardsproject.modules.register.Register
 
 class OnboardingRouter : OnboardingContracts.Router {
 

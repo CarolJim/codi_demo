@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RichardsProject</string>
+    <string name="hint_edt_email">Correo electrónico</string>
+    <string name="hint_edt_password">Contraseña</string>
 </resources>

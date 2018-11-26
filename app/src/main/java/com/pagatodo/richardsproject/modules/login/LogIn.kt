@@ -1,13 +1,13 @@
-package com.pagatodo.richardsproject.register
+package com.pagatodo.richardsproject.modules.login
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.pagatodo.richardsproject.R
 
-class Register : AppCompatActivity() {
+class LogIn : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        setContentView(R.layout.activity_log_in)
     }
 }

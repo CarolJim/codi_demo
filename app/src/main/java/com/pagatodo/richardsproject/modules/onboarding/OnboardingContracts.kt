@@ -1,4 +1,4 @@
-package com.pagatodo.richardsproject.onboarding
+package com.pagatodo.richardsproject.modules.onboarding
 
 class OnboardingContracts {
 
