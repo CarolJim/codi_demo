@@ -15,9 +15,11 @@ class OnboardingRouter : OnboardingContracts.Router {
 
     override fun presentRegisterScreen() {
         activity.startActivity(Intent(activity, Register::class.java))
+        activity.finish()
     }
 
     override fun presentLogInScreen() {
         activity.startActivity(Intent(activity, LogIn::class.java))
+        activity.finish()
     }
 }

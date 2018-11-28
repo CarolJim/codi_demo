@@ -16,6 +16,8 @@ import java.net.URLEncoder;
 
 public class NetworkUtils {
 
+    public static final int CODE_OK = 0;
+
     public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo network_info = cm.getActiveNetworkInfo();

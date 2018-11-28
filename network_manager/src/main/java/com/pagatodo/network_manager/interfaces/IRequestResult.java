@@ -3,9 +3,9 @@ package com.pagatodo.network_manager.interfaces;
 /**
  * Created by ozunigag
  */
-public interface IRequestResult<Data extends Object> {
+public interface IRequestResult {
 
-    void onSuccess(Data data);
+    void onSuccess(Object data);
 
-    void onFailed(Data error);
+    void onFailed(Object error);
 }

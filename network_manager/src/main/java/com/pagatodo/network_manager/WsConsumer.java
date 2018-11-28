@@ -33,7 +33,6 @@ public class WsConsumer {
                 disableSSLValidation();
             }
             wsCaller.sendJsonPost(context, pins, WSConfiguration);
-
         } else {
             throw new OfflineException();
         }

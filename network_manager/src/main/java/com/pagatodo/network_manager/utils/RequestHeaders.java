@@ -64,11 +64,7 @@ public class RequestHeaders {
     }
 
     public static String getUsername() {
-
-
         return sharedPreferences.getString(NombreUsuario, "");
-
-
     }
 
     public static void setUsername(String username) {

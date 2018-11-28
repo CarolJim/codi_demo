@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">RichardsProject</string>
+    <string name="app_name">Swap Demo</string>
+    <!-- Onboarding -->
     <string name="hint_edt_email">Correo electrónico</string>
     <string name="hint_edt_password">Contraseña</string>
+    <!-- Log In -->
+    <string name="datos_usuario_correo">El correo no es correcto, revísalo y vuelve a intentar.</string>
+    <string name="password_required">La contraseña no es correcta, revísala y vuelve a intentar.</string>
+
+    <!-- Shared Preferences -->
+    <string name="prf_richard_parameters">prf_richard_demo</string>
 </resources>
