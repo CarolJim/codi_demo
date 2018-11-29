@@ -105,6 +105,36 @@ public class StringUtils {
         return spannableStringBuilder;
     }
 
+    public static String genericFormat(String text, String separator) {
+        int groups = (text.length() - 1) / 5;
+        int[] formatPattern = new int[groups];
+        Arrays.fill(formatPattern, 4);
+        StringBuilder format = new StringBuilder();
+        int size = 0;
+        for (int current : formatPattern) {
+            size += current;
+        }
+
+        if (text.length() > size) {
+            return text;
+        }
+
+        int currentGroup = formatPattern.length - 1;
+        int currentSize = formatPattern[currentGroup];
+        for (int n = text.length() - 1; n >= 0; n--) {
+            format.insert(0, text.charAt(n));
+            currentSize--;
+            if (currentSize == 0) {
+                currentGroup--;
+                if (n != 0) {
+                    currentSize = formatPattern[currentGroup];
+                    format.insert(0, separator);
+                }
+            }
+        }
+
+        return format.toString();
+    }
 
     public static String getCreditCardFormat(String card) {
         StringBuilder result = new StringBuilder();

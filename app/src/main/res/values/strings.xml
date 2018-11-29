@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Swap Demo</string>
+    <string name="app_name">Demo</string>
     <!-- Onboarding -->
     <string name="hint_edt_email">Correo electrónico</string>
     <string name="hint_edt_password">Contraseña</string>
