@@ -50,4 +50,6 @@ dependencies {
     implementation project(":network_manager")
     // Show Configuration App By Google Chrome
     implementation 'com.facebook.stetho:stetho:1.5.0'
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.0'
 }
