@@ -7,6 +7,20 @@
     <string name="datos_usuario_correo">El correo no es correcto, revísalo y vuelve a intentar.</string>
     <string name="password_required">La contraseña no es correcta, revísala y vuelve a intentar.</string>
 
+    <!-- Lista de meses para calendarios -->
+    <string name="lista_meses_enero">Ene</string>
+    <string name="lista_meses_febrero">Feb</string>
+    <string name="lista_meses_marzo">Mar</string>
+    <string name="lista_meses_abril">Abr</string>
+    <string name="lista_meses_mayo">May</string>
+    <string name="lista_meses_junio">Jun</string>
+    <string name="lista_meses_julio">Jul</string>
+    <string name="lista_meses_agosto">Ago</string>
+    <string name="lista_meses_septiembre">Sep</string>
+    <string name="lista_meses_octubre">Oct</string>
+    <string name="lista_meses_noviembre">Nov</string>
+    <string name="lista_meses_diciembre">Dic</string>
+
     <!-- Shared Preferences -->
     <string name="prf_richard_parameters">prf_richard_demo</string>
 </resources>
