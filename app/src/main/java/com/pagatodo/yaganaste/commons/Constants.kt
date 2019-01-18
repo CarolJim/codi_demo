@@ -1,6 +1,8 @@
 package com.pagatodo.yaganaste.commons
 
 const val RSA_KEY = "rk2QHAmXByr9wIf6d1cgU+f9NtKvj2xWvRv2wUcZSMVvhfTkcoWLG/CxEK+weoS3QcxxEWKFrWgwhYABXpkGhlXiqH7GyRIhv2kQtuZlGJJSIExd2asJrtjDnfStu7ZKbdIpLzqFUfo8naDhCuQTzhyApyJQ9HDcOSTFuRhJ7Mz3gXwUXqr98i+he+iYCzyrMViP+o4UPUqfNcpSafUw4NYre9KEZoHMaKcPMR4bMjax3Payt9LDAU3KgBOnWS9Ga6WffE03tpAWqE3ape61CmPw5QKPgRNKSnV70wu7f02jmstEepM35aSf3gL9SKMUv3DkwYIpifhNYPbdKCh+BQ=="
+
+/* Shared Preferences */
 const val SPACE = " "
 const val HAS_SESSION = "HAS_SESSION"
 const val SIMPLE_NAME = "SIMPLE_NAME"
@@ -14,7 +16,9 @@ const val PHONE_NUMBER = "PHONE_NUMBER"
 /* CODI */
 const val TAG_CODI = "TAG_CODI"
 const val HAS_REGISTER_CODI = "HAS_REGISTER_CODI"
-const val CODI_IDH = "ID_HARDWARE"
+const val CODI_IDH = "CODI_IDH"
+const val CODI_DV = "CODI_DV"
+const val CODI_DV_OMISION = "CODI_DV_OMISION"
 const val CODI_GOOGLE_ID_ENCRYPTED = "CODI_GOOGLE_ID_ENCRYPTED"
 const val CODI_GOOGLE_ID_DECRYPTED = "CODI_GOOGLE_ID_DECRYPTED"
 const val CODI_NOTIFICATIONS_ID = "CODI_NOTIFICATIONS_ID"
@@ -28,3 +32,9 @@ const val BANKS_JSON = "[{\"id\":\"757\",\"banco\":\"Bancomext\"},{\"id\":\"758\
 
 /* Activity For Result Request Code's */
 const val RC_SEND_MONEY = 1000
+
+/* Firebase Project ID */
+const val ODIN_ID = "odin-dd5ba"
+
+/* Intent Action Names */
+const val INTENT_TOKEN_FIREBASE = "INTENT_TOKEN_FIREBASE"

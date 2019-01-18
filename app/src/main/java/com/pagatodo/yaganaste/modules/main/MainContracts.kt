@@ -18,6 +18,7 @@ class MainContracts {
         fun getBalance()
         fun getMovements()
         fun registerCodi()
+        fun registerToPushService()
         fun registerDeviceCodi()
     }
 

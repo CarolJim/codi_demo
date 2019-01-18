@@ -26,13 +26,7 @@ import java.util.*
 import javax.crypto.Cipher
 
 
-class MainIteractor : MainContracts.Iteractor, IRequestResult {
-
-    var presenter: MainContracts.Presenter
-
-    constructor(presenter: MainContracts.Presenter) {
-        this.presenter = presenter
-    }
+class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iteractor, IRequestResult {
 
     override fun getBalance() {
         presenter.showLoader("Obteniendo saldo")
@@ -109,6 +103,7 @@ class MainIteractor : MainContracts.Iteractor, IRequestResult {
                          * y la bandera de [HAS_REGISTER_CODI] para realizar en sesiones posteriores el Registro Subsecuente */
                         App.getPreferences().saveData(CODI_GOOGLE_ID_ENCRYPTED, response.body()!!.gId)
                         App.getPreferences().saveDataBool(HAS_REGISTER_CODI, true)
+                        App.getPreferences().saveData(CODI_DV, validateDv(response.body()!!.dv.toString()))
                         presenter.onRegisterCodiSuccess()
                     } else {
                         Log.e("CODI", "Error en parámetros de entrada")
@@ -124,31 +119,34 @@ class MainIteractor : MainContracts.Iteractor, IRequestResult {
         })
     }
 
-    override fun registerDeviceCodi() {
+    override fun registerToPushService() {
         /** Obtener del Id del proyecto Google de la cadena cifrada que regresa Banxico en el Registro Inicial */
         val googleId = Utils.Aes128CbcPkcs(App.getPreferences().loadData(CODI_KEY_AES),
                 App.getPreferences().loadData(CODI_IV_AES), App.getPreferences().loadData(CODI_GOOGLE_ID_ENCRYPTED),
                 Cipher.DECRYPT_MODE)
         /** Se guarda el Id del proyecto Google en preferencias para poder emplearlo posteriormente */
         App.getPreferences().saveData(CODI_GOOGLE_ID_DECRYPTED, googleId)
-
         /** Se crea un objeto [FirebaseOptions] para acceder al proyecto de Notificaciones de Banxico */
-        val options = FirebaseOptions.Builder().setProjectId(googleId).setApplicationId("ERRRRRROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOR").build()
-
-
+        val options = FirebaseOptions.Builder().setApplicationId("1:$googleId:android:$ODIN_ID").build()
         /** Se crea un objecto [FirebaseApp] de donde se va a obtener el ID de Cloud Messaging asignado a la App */
         val firebaseApp = FirebaseApp.initializeApp(App.getContext(), options, "codi")
         /** Por medio de una tarea se obtiene el token asgiando al dispositivo y se guarda en preferenias para uso posterior */
-        FirebaseInstanceId.getInstance(firebaseApp).instanceId.addOnCompleteListener { task -> if (task.isSuccessful) App.getPreferences().saveData(CODI_NOTIFICATIONS_ID, task.result!!.token) }
+        FirebaseInstanceId.getInstance(firebaseApp).instanceId.addOnCompleteListener { task ->
+            if (task.isSuccessful) Log.e(TAG_CODI, "Token Request Successful")
+            else Log.e(TAG_CODI, "Token Request Failed")
+        }
+    }
+
+    override fun registerDeviceCodi() {
         /** Se obtiene el HMAC con la llave de descrifrado por medio del SHA256, y se cifra la concatenación del número
          * telefónico, el código de verificación que llegó vía SMS y el token asignado del proyecto de Google de Banxico */
         val hmac = Utils.HmacSha256(App.getPreferences().loadData(CODI_KEY_HMAC), App.getPreferences().loadData(PHONE_NUMBER) +
-                App.getPreferences().loadData(CODI_VERIFICATION_CODE) + App.getPreferences().loadData(CODI_NOTIFICATIONS_ID))
+                App.getPreferences().loadData(CODI_DV) + App.getPreferences().loadData(CODI_NOTIFICATIONS_ID))
         /** Creación del objeto request para el Registro Subsecuente del Dispostivo */
         val request = RegistroDispositivo_Request(App.getPreferences().loadData(PHONE_NUMBER),
                 App.getPreferences().loadData(CODI_IDH), Aditional_Info_Data("android",
                 android.os.Build.VERSION.SDK_INT.toString(), Build.MANUFACTURER, Build.MODEL),
-                App.getPreferences().loadDataInt(CODI_VERIFICATION_CODE), App.getPreferences().loadData(CODI_NOTIFICATIONS_ID),
+                App.getPreferences().loadData(CODI_DV).toInt(), App.getPreferences().loadData(CODI_NOTIFICATIONS_ID),
                 hmac)
         val text = "d=" + Gson().toJson(request)
         /** Generación de header para indicar que el body es un tipo text/plain */
@@ -159,6 +157,7 @@ class MainIteractor : MainContracts.Iteractor, IRequestResult {
             override fun onResponse(call: Call<RegistroDispositivo_Result>, response: Response<RegistroDispositivo_Result>) {
                 if (response.code() == HTTP_OK) {
                     if (response.body()!!.edoPet == 0) {
+                        App.getPreferences().saveData(CODI_DV_OMISION, validateDv(response.body()!!.dvOmision.toString()))
                         presenter.onRegisterPhoneSuccess()
                     } else {
                         Log.e("CODI", "Error en parámetros de entrada")
@@ -172,5 +171,13 @@ class MainIteractor : MainContracts.Iteractor, IRequestResult {
                 Log.e("CODI", "Error en servicio http: " + t.message)
             }
         })
+    }
+
+    private fun validateDv(dv: String): String {
+        return when (dv.length) {
+            1 -> "00".plus(dv)
+            2 -> "0".plus(dv)
+            else -> dv
+        }
     }
 }
