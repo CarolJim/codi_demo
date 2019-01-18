@@ -5,15 +5,11 @@ import com.pagatodo.network_manager.dtos.sender_yg.requests.CreateUserRequest
 import com.pagatodo.network_manager.dtos.sender_yg.results.CreateUserDataResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.CreateUserResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.SenderGenericResult
-import com.pagatodo.network_manager.dtos.sender_yg.results.UyuLogInResult
 import com.pagatodo.network_manager.interfaces.IRequestResult
 import com.pagatodo.network_manager.utils.NetworkUtils.CODE_OK
 import com.pagatodo.network_manager.utils.RequestHeaders
-import com.pagatodo.richardsproject.App
-import com.pagatodo.richardsproject.commons.Constants
-import com.pagatodo.richardsproject.commons.StringUtils
-import com.pagatodo.richardsproject.commons.Utils
-import java.lang.Exception
+import com.pagatodo.yaganaste.App
+import com.pagatodo.yaganaste.commons.*
 
 class RegisterIteractor : RegisterContracts.Iteractor, IRequestResult {
 
@@ -26,7 +22,7 @@ class RegisterIteractor : RegisterContracts.Iteractor, IRequestResult {
     override fun registerUserClient(name: String, surname: String, secondSurname: String, email: String,
                                     dateBirth: String, placeBirth: String, genre: String, claveBirthPlace: String) {
         presenter.showLoader("Creando usuario")
-        var request = CreateUserRequest(email, Utils.cipherRSA("123456", Constants().RSA_KEY), name,
+        var request = CreateUserRequest(email, Utils.cipherRSA("123456", RSA_KEY), name,
                 surname, secondSurname, genre, dateBirth, "", "", "MX", placeBirth,
                 email, "", "", "090150882", "Otra colonia 23",
                 "06100", "Mandalas23", "39", "", 127)
@@ -64,16 +60,16 @@ class RegisterIteractor : RegisterContracts.Iteractor, IRequestResult {
         RequestHeaders.setTokenAdq(response.usuario.tokenSesion)
         RequestHeaders.setIdCuentaAdq(response.usuario.idUsuarioAdquirente)
         RequestHeaders.setIdCuenta(String.format("%s", response.emisor.cuentas[0].idCuenta))
-        prefs.saveDataBool(Constants().HAS_SESSION, true)
-        prefs.saveData(Constants().SIMPLE_NAME, StringUtils.getFirstName(response.cliente.nombre)
-                .plus(Constants().SPACE).plus(response.cliente.primerApellido))
+        prefs.saveDataBool(HAS_SESSION, true)
+        prefs.saveData(SIMPLE_NAME, StringUtils.getFirstName(response.cliente.nombre)
+                .plus(SPACE).plus(response.cliente.primerApellido))
 
-        prefs.saveData(Constants().NAME_USER, response.cliente.nombre)
-        prefs.saveData(Constants().FULL_NAME_USER, response.cliente.nombre.plus(Constants().SPACE)
-                .plus(response.cliente.primerApellido.plus(Constants().SPACE).plus(response.cliente.segundoApellido)))
-        prefs.saveData(Constants().LAST_NAME, response.cliente.primerApellido.plus(Constants().SPACE))
+        prefs.saveData(NAME_USER, response.cliente.nombre)
+        prefs.saveData(FULL_NAME_USER, response.cliente.nombre.plus(SPACE)
+                .plus(response.cliente.primerApellido.plus(SPACE).plus(response.cliente.segundoApellido)))
+        prefs.saveData(LAST_NAME, response.cliente.primerApellido.plus(SPACE))
         response.emisor.cuentas[0].tarjetas[0].numero = response.emisor.cuentas[0].tarjetas[0].numero.replace(" ", "")
-        prefs.saveData(Constants().CARD_NUMBER, response.emisor.cuentas[0].tarjetas[0].numero)
-        prefs.saveData(Constants().ID_CUENTA, response.emisor.cuentas[0].idCuenta.toString())
+        prefs.saveData(CARD_NUMBER, response.emisor.cuentas[0].tarjetas[0].numero)
+        prefs.saveData(ID_CUENTA, response.emisor.cuentas[0].idCuenta.toString())
     }
 }

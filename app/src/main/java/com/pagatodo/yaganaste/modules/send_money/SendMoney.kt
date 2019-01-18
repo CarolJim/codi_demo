@@ -8,15 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
-import com.pagatodo.richardsproject.R
-import com.pagatodo.richardsproject.commons.Constants
-import com.pagatodo.richardsproject.commons.UI
-import com.pagatodo.richardsproject.databinding.ActivitySendMoneyBinding
-import com.pagatodo.richardsproject.dtos.Banks
-import com.pagatodo.richardsproject.watchers.AmountTextWatcher
-import com.pagatodo.richardsproject.watchers.CardTextWatcher
 import com.pagatodo.yaganaste.R
 import com.pagatodo.yaganaste.commons.BANKS_JSON
+import com.pagatodo.yaganaste.commons.UI
 import com.pagatodo.yaganaste.databinding.ActivitySendMoneyBinding
 import com.pagatodo.yaganaste.dtos.Banks
 import com.pagatodo.yaganaste.watchers.AmountTextWatcher

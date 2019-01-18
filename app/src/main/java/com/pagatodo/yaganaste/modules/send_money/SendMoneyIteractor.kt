@@ -6,8 +6,8 @@ import com.pagatodo.network_manager.dtos.sender_yg.results.SendMoneyResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.SenderGenericResult
 import com.pagatodo.network_manager.interfaces.IRequestResult
 import com.pagatodo.network_manager.utils.NetworkUtils.CODE_OK
-import com.pagatodo.richardsproject.App
-import com.pagatodo.richardsproject.commons.StringUtils.createTicket
+import com.pagatodo.yaganaste.App
+import com.pagatodo.yaganaste.commons.StringUtils.createTicket
 import java.lang.Exception
 
 class SendMoneyIteractor : SendMoneyContracts.Iteractor, IRequestResult {

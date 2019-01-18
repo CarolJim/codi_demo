@@ -7,17 +7,16 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
-import com.pagatodo.richardsproject.R
-import com.pagatodo.richardsproject.commons.Constants
-import com.pagatodo.richardsproject.commons.DateUtil
-import com.pagatodo.richardsproject.commons.UI
-import com.pagatodo.richardsproject.databinding.ActivityRegisterBinding
 import com.pagatodo.richardsproject.dtos.Counties
+import com.pagatodo.yaganaste.R
+import com.pagatodo.yaganaste.commons.COUNTIES_JSON
+import com.pagatodo.yaganaste.commons.DateUtil
+import com.pagatodo.yaganaste.commons.UI
+import com.pagatodo.yaganaste.databinding.ActivityRegisterBinding
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,7 +56,7 @@ class Register : AppCompatActivity(), RegisterContracts.Presenter, View.OnClickL
 
         }
         /* Bank json to object */
-        val jsonArray = JSONArray(Constants().COUNTIES_JSON)
+        val jsonArray = JSONArray(COUNTIES_JSON)
         val list = ArrayList<Counties>()
         val strings = ArrayList<String>()
         for (i in 0 until jsonArray.length() - 1 step 1) {
