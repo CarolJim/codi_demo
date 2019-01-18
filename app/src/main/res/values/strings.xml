@@ -6,6 +6,8 @@
     <!-- Log In -->
     <string name="datos_usuario_correo">El correo no es correcto, revísalo y vuelve a intentar.</string>
     <string name="password_required">La contraseña no es correcta, revísala y vuelve a intentar.</string>
+    <!-- Verification Code Dialog -->
+    <string name="enter_verification_code">Ingresa el código de verificación\nenviado a tu número de celular:</string>
 
     <!-- Shared Preferences -->
     <string name="prf_richard_parameters">prf_richard_demo</string>

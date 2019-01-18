@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "com.pagatodo.richardsproject"
+        applicationId "com.pagatodo.yaganaste"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -45,11 +46,22 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    // Google
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.gms:play-services-base:16.0.1'
+    implementation 'com.google.code.gson:gson:2.8.0'
     // PagaTodo Managers
     implementation project(":network_manager")
     // Show Configuration App By Google Chrome
     implementation 'com.facebook.stetho:stetho:1.5.0'
-    // Gson
-    implementation 'com.google.code.gson:gson:2.8.0'
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    // Apache
+    implementation 'org.apache.commons:com.springsource.org.apache.commons.codec:1.6.0'
+    // Firebase
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
 }
+
+apply plugin: 'com.google.gms.google-services'
