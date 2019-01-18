@@ -6,9 +6,11 @@ import com.android.volley.Request;
 import com.pagatodo.network_manager.WsConsumer;
 import com.pagatodo.network_manager.dtos.WSConfiguration;
 import com.pagatodo.network_manager.dtos.sender_yg.results.BalanceResult;
+import com.pagatodo.network_manager.dtos.sender_yg.results.CreateUserResult;
 import com.pagatodo.network_manager.dtos.sender_yg.results.LogInResult;
 import com.pagatodo.network_manager.dtos.sender_yg.results.LogOutResult;
 import com.pagatodo.network_manager.dtos.sender_yg.results.MovementsResult;
+import com.pagatodo.network_manager.dtos.sender_yg.results.SendMoneyResult;
 import com.pagatodo.network_manager.dtos.sender_yg.results.SenderGenericResult;
 import com.pagatodo.network_manager.dtos.sender_yg.results.ValidatePersonResult;
 import com.pagatodo.network_manager.interfaces.IRequestResult;
@@ -27,6 +29,14 @@ public class SenderApi extends GenericApi {
         WSConfiguration WSConfiguration = WsConsumer.createRequest(Request.Method.POST, url,
                 request, 20000, headers, ValidatePersonResult.class, result);
         WsConsumer.consumeWS(context, null, WSConfiguration);
+    }
+
+    public static void createUser(Context context, Object request, IRequestResult result, String url) throws OfflineException {
+        Map<String, String> headers = getHeadersYaGanaste();
+        headers.put(RequestHeaders.TokenDispositivo, RequestHeaders.getTokendevice());
+        WSConfiguration WSConfiguration = WsConsumer.createRequest(Request.Method.POST, url,
+                request, 25000, headers, CreateUserResult.class, result);
+        WsConsumer.consumeWS(context, new String[]{PIN_ADTVO}, WSConfiguration);
     }
 
     public static void logIn(Context context, Object request, IRequestResult result, String url) throws OfflineException {
@@ -61,5 +71,14 @@ public class SenderApi extends GenericApi {
         WSConfiguration WSConfiguration = WsConsumer.createRequest(Request.Method.POST, url,
                 request, 25000, headers, MovementsResult.class, result);
         WsConsumer.consumeWS(context, new String[]{PIN_ADTVO}, WSConfiguration);
+    }
+
+    public static void enviarDinero(Context context, Object request, IRequestResult result, String url) throws OfflineException {
+        Map<String, String> headers = getHeadersYaGanaste();
+        headers.put(RequestHeaders.TokenSesion, RequestHeaders.getTokensesion());
+        headers.put(RequestHeaders.IdOperacion, "1");
+        WSConfiguration WSConfiguration = WsConsumer.createRequest(Request.Method.POST, url,
+                request, 25000, headers, SendMoneyResult.class, result);
+        WsConsumer.consumeWS(context, new String[]{PIN_TRANS}, WSConfiguration);
     }
 }
