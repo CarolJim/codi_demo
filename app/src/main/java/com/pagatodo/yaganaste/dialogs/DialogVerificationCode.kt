@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.snackbar.Snackbar
@@ -36,8 +37,12 @@ class DialogVerificationCode : DialogFragment(), View.OnClickListener {
             binding.btnVerifyCode.id -> {
                 when {
                     binding.edtVerificationCode.text.toString().isEmpty() -> UI().showErrorSnackBar(activity, "Favor de ingresar el código de verificación", Snackbar.LENGTH_SHORT)
-                    binding.edtVerificationCode.text.toString().length<6 -> UI().showErrorSnackBar(activity, "El código de verificación debe tener 6 dígitos", Snackbar.LENGTH_SHORT)
-                    else -> listener.onVerifyCode(binding.edtVerificationCode.text.toString())
+                    binding.edtVerificationCode.text.toString().length < 6 -> UI().showErrorSnackBar(activity, "El código de verificación debe tener 6 dígitos", Snackbar.LENGTH_SHORT)
+                    else -> {
+                        Toast.makeText(activity, "Validando código", Toast.LENGTH_SHORT).show()
+                        listener.onVerifyCode(binding.edtVerificationCode.text.toString())
+                        dismiss()
+                    }
                 }
             }
         }

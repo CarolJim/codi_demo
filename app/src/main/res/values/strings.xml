@@ -8,6 +8,8 @@
     <string name="password_required">La contraseña no es correcta, revísala y vuelve a intentar.</string>
     <!-- Verification Code Dialog -->
     <string name="enter_verification_code">Ingresa el código de verificación\nenviado a tu número de celular:</string>
+    <!-- Phone Number Dialog -->
+    <string name="enter_phone_number">Ingresa tu número telefónico:</string>
 
     <!-- Lista de meses para calendarios -->
     <string name="lista_meses_enero">Ene</string>
@@ -25,4 +27,13 @@
 
     <!-- Shared Preferences -->
     <string name="prf_richard_parameters">prf_richard_demo</string>
+    <!-- Strings related to barcode scanner -->
+    <string name="ok">Ok</string>
+    <string name="permission_camera_rationale">Se necesita acceso a la cámara para la detección del código</string>
+    <string name="no_camera_permission">Esta aplicación no se puede ejecutar a menos que active el permiso a su
+        cámara.
+    </string>
+    <string name="low_storage_error">Memoria de almacenamiento casi llena</string>
+    <string name="invalid_qr_code">Código Qr inválido</string>
 </resources>
+

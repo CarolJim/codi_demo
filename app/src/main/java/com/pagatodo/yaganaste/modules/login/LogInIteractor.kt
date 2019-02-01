@@ -78,6 +78,7 @@ class LogInIteractor : LogInContracts.Iteractor, IRequestResult {
         prefs.saveData(LAST_NAME, response.cliente.primerApellido.plus(SPACE))
         response.emisor.cuentas[0].tarjetas[0].numero = response.emisor.cuentas[0].tarjetas[0].numero.replace(" ", "")
         prefs.saveData(CARD_NUMBER, response.emisor.cuentas[0].tarjetas[0].numero)
+        prefs.saveData(CLABE_NUMBER, response.emisor.cuentas[0].clabe)
         prefs.saveData(ID_CUENTA, response.emisor.cuentas[0].idCuenta.toString())
         prefs.saveData(CODI_IDH, Utils.getTokenDevice(App.getContext()) + "-" + BuildConfig.APPLICATION_ID)
     }

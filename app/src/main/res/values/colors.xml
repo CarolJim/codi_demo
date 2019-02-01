@@ -3,7 +3,12 @@
     <color name="colorPrimary">#00a1e1</color>
     <color name="colorPrimaryDark">#46606a</color>
     <color name="colorAccent">#00a1e1</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
 
-    <color name="redColorTransparent">#D0021B</color>
-    <color name="redGreenTransparent">#22AF48</color>
+    <color name="colorRedTransparent">#AAD0021B</color>
+    <color name="colorGreenTransparent">#AA22AF48</color>
+    <color name="colorBlueTransparent">#AA00a1e1</color>
+    <color name="colorYellowTransparent">#AAE1CB00</color>
+    <color name="colorGrayTransparent">#AA858585</color>
 </resources>

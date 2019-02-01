@@ -1,1 +1,1 @@
-include ':app', ':network_manager'
+include ':app', ':network_manager', ':camera_manager'

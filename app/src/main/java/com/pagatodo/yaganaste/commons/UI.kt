@@ -14,7 +14,7 @@ class UI {
         val params = view.getLayoutParams() as FrameLayout.LayoutParams
         params.gravity = Gravity.BOTTOM
         view.setLayoutParams(params)
-        view.setBackgroundColor(rootView.getResources().getColor(R.color.redColorTransparent))
+        view.setBackgroundColor(rootView.getResources().getColor(R.color.colorRedTransparent))
         snack.show()
     }
 
@@ -24,7 +24,7 @@ class UI {
         val params = view.getLayoutParams() as FrameLayout.LayoutParams
         params.gravity = Gravity.BOTTOM
         view.setLayoutParams(params)
-        view.setBackgroundColor(rootView.getResources().getColor(R.color.redGreenTransparent))
+        view.setBackgroundColor(rootView.getResources().getColor(R.color.colorGreenTransparent))
         snack.show()
     }
 }

@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Demo Gemelo</string>
+    <!-- Onboarding -->
+    <string name="hint_edt_email">Correo electrónico</string>
+    <string name="hint_edt_password">Contraseña</string>
+    <!-- Log In -->
+    <string name="datos_usuario_correo">El correo no es correcto, revísalo y vuelve a intentar.</string>
+    <string name="password_required">La contraseña no es correcta, revísala y vuelve a intentar.</string>
+    <!-- Verification Code Dialog -->
+    <string name="enter_verification_code">Ingresa el código de verificación\nenviado a tu número de celular:</string>
+    <!-- Phone Number Dialog -->
+    <string name="enter_phone_number">Ingresa tu número telefónico:</string>
+
+    <!-- Lista de meses para calendarios -->
+    <string name="lista_meses_enero">Ene</string>
+    <string name="lista_meses_febrero">Feb</string>
+    <string name="lista_meses_marzo">Mar</string>
+    <string name="lista_meses_abril">Abr</string>
+    <string name="lista_meses_mayo">May</string>
+    <string name="lista_meses_junio">Jun</string>
+    <string name="lista_meses_julio">Jul</string>
+    <string name="lista_meses_agosto">Ago</string>
+    <string name="lista_meses_septiembre">Sep</string>
+    <string name="lista_meses_octubre">Oct</string>
+    <string name="lista_meses_noviembre">Nov</string>
+    <string name="lista_meses_diciembre">Dic</string>
+
+    <!-- Shared Preferences -->
+    <string name="prf_richard_parameters">prf_richard_demo_gem</string>
+    <!-- Strings related to barcode scanner -->
+    <string name="ok">Ok</string>
+    <string name="permission_camera_rationale">Se necesita acceso a la cámara para la detección del código</string>
+    <string name="no_camera_permission">Esta aplicación no se puede ejecutar a menos que active el permiso a su
+        cámara.
+    </string>
+    <string name="low_storage_error">Memoria de almacenamiento casi llena</string>
+    <string name="invalid_qr_code">Código Qr inválido</string>
+</resources>
+

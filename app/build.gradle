@@ -29,6 +29,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "default"
+    productFlavors {
+        // Flavor principal donde se compila CoDi
+        principal {
+            applicationId "com.pagatodo.yaganaste"
+            buildConfigField("String", "IDUN_URL", "\"https://idun-qa.yaganaste.net/api/\"")
+        }
+        // Flavor donde se compila CoDi con configuración del gemelo
+        twin {
+            applicationId "com.pagatodo.yaganaste_gemelo"
+            buildConfigField("String", "IDUN_URL", "\"https://idungem-qa.yaganaste.net/api/\"")
+        }
+    }
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -41,17 +54,20 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     // Android X Libraries
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.0'
-    implementation 'androidx.multidex:multidex:2.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
+    implementation 'androidx.core:core:1.1.0-alpha03'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     // Google
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.android.gms:play-services-base:16.0.1'
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.android.gms:play-services-base:16.1.0'
+    implementation 'com.google.android.gms:play-services-vision:17.0.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     // PagaTodo Managers
     implementation project(":network_manager")
+    implementation project(":camera_manager")
     // Show Configuration App By Google Chrome
     implementation 'com.facebook.stetho:stetho:1.5.0'
     // Retrofit
@@ -61,7 +77,8 @@ dependencies {
     // Apache
     implementation 'org.apache.commons:com.springsource.org.apache.commons.codec:1.6.0'
     // Firebase
-    implementation 'com.google.firebase:firebase-messaging:17.3.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
 }
 
 //apply plugin: 'com.google.gms.google-services'
+

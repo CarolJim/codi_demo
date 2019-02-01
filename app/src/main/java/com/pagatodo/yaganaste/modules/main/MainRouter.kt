@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.commons.RC_SEND_MONEY
+import com.pagatodo.yaganaste.modules.generate_qr.GenerateQr
 import com.pagatodo.yaganaste.modules.send_money.SendMoney
 
 class MainRouter : MainContracts.Router {
-
     var activity: Activity
 
     constructor(activity: Activity) {
@@ -16,5 +16,9 @@ class MainRouter : MainContracts.Router {
 
     override fun presentSendMoneyScreen() {
         activity.startActivityForResult(Intent(App.getContext(), SendMoney::class.java), RC_SEND_MONEY)
+    }
+
+    override fun presentGenerateQrScreen() {
+        activity.startActivity(Intent(App.getContext(), GenerateQr::class.java))
     }
 }

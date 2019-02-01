@@ -3,7 +3,6 @@ package com.pagatodo.yaganaste.modules.send_money
 import android.app.Activity
 
 class SendMoneyRouter : SendMoneyContracts.Router {
-
     private var activity: Activity
 
     constructor(activity: Activity) {

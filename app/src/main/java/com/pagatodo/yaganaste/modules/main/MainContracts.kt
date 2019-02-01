@@ -12,6 +12,7 @@ class MainContracts {
         fun onRegisterCodiSuccess()
         fun onRegisterPhoneSuccess()
         fun onVerifyCode(code: String)
+        fun onVerifyPhoneNumber()
     }
 
     interface Iteractor {
@@ -24,5 +25,6 @@ class MainContracts {
 
     interface Router {
         fun presentSendMoneyScreen()
+        fun presentGenerateQrScreen()
     }
 }

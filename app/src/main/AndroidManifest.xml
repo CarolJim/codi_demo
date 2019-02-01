@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pagatodo.yaganaste">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
+
     <application
-        android:name="com.pagatodo.yaganaste.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +29,7 @@
         </service>
 
         <activity
-            android:name="com.pagatodo.yaganaste.modules.onboarding.Onboarding"
+            android:name=".modules.onboarding.Onboarding"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +39,9 @@
             <!-- Filtro para abrir App por mensaje de cobro desde CoDi de terceros -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="payreq"
                     android:path="/40148"
@@ -40,19 +49,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pagatodo.yaganaste.modules.register.Register"
+            android:name=".modules.register.Register"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pagatodo.yaganaste.modules.login.LogIn"
+            android:name=".modules.login.LogIn"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pagatodo.yaganaste.modules.main.MainActivity"
+            android:name=".modules.main.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.pagatodo.yaganaste.modules.send_money.SendMoney"
+            android:name=".modules.send_money.SendMoney"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".modules.generate_qr.GenerateQr"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".modules.money_notification.MoneyNotification"
+            android:theme="@style/AppDialog" />
     </application>
 
 </manifest>

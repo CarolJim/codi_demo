@@ -1,20 +1,14 @@
 package com.pagatodo.yaganaste.modules.login
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
 import com.pagatodo.network_manager.utils.RequestHeaders
-import com.pagatodo.yaganaste.App
-import com.pagatodo.yaganaste.BuildConfig
 import com.pagatodo.yaganaste.R
 import com.pagatodo.yaganaste.commons.UI
-import com.pagatodo.yaganaste.commons.Utils
-import com.pagatodo.yaganaste.commons.Utils.Sha512Hex
 import com.pagatodo.yaganaste.databinding.ActivityLogInBinding
 
 class LogIn : AppCompatActivity(), LogInContracts.Presenter, View.OnClickListener {
