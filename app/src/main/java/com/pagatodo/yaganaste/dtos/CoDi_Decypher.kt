@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName
  * @param com - Valor que indica quien paga la comisión por la transferencia:
  *              1 - El cliente emisor de la transferencia paga.
  *              2 - El cliente beneficiario de la transferencia paga.
+ * @param dat - Estampa de tiempo del momento de la generación de la solicitud, en milisegundos desde las 00:00:00.000 horas del 01 enero de 1970 en UTC
  * @param typ - Este campo indica el tipo de pago a emplear cuando la transferencia de fondos sea interbancaria:
  *              19 - Caso Presencial - Cobro de una sola ocasión
  *              20 - Caso No Presencial - Cobro de una sola ocasión
@@ -21,13 +22,15 @@ import com.google.gson.annotations.SerializedName
  */
 class CoDi_Decypher(@SerializedName("IDC") val idc: String, @SerializedName("DES") val des: String,
                     @SerializedName("AMO") val amo: Double, @SerializedName("COM") val com: Int,
-                    @SerializedName("TYP") val typ: Int, @SerializedName("v") val v: V_Decypher) : Parcelable {
+                    @SerializedName("DAT") val dat: Long, @SerializedName("TYP") val typ: Int,
+                    @SerializedName("v") val v: V_Decypher) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readDouble(),
             parcel.readInt(),
+            parcel.readLong(),
             parcel.readInt(),
             parcel.readParcelable(V_Decypher::class.java.classLoader))
 
@@ -36,6 +39,7 @@ class CoDi_Decypher(@SerializedName("IDC") val idc: String, @SerializedName("DES
         parcel.writeString(des)
         parcel.writeDouble(amo)
         parcel.writeInt(com)
+        parcel.writeLong(dat)
         parcel.writeInt(typ)
         parcel.writeParcelable(v, flags)
     }

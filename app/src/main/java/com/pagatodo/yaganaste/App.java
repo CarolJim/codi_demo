@@ -3,12 +3,14 @@ package com.pagatodo.yaganaste;
 import android.content.Context;
 
 import com.facebook.stetho.Stetho;
-import com.google.firebase.FirebaseApp;
 import com.pagatodo.network_manager.utils.RequestHeaders;
 import com.pagatodo.yaganaste.commons.Preferences;
 
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
+
+import static com.pagatodo.yaganaste.commons.ConstantsKt.CODI_SER;
+import static com.pagatodo.yaganaste.commons.ConstantsKt.CODI_SER_LAST_UPDATE;
 
 public class App extends MultiDexApplication {
 
@@ -29,6 +31,13 @@ public class App extends MultiDexApplication {
         // Configuraciones de la App
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
+        }
+        // Increment Serialize CoDi
+        long lastUpdateSer = Long.valueOf(preferences.loadData(CODI_SER_LAST_UPDATE, "0"));
+        if (System.currentTimeMillis() - lastUpdateSer > (1000 * 60 * 60 * 24) || lastUpdateSer == 0) {
+            long ser = Long.valueOf(preferences.loadData(CODI_SER, "0"));
+            preferences.saveData(CODI_SER, (ser++) + "");
+            preferences.saveData(CODI_SER_LAST_UPDATE, System.currentTimeMillis() + "");
         }
     }
 
