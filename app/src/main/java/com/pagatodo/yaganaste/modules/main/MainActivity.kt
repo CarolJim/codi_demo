@@ -134,7 +134,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
     private val myBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent!!.action) {
-                INTENT_TOKEN_FIREBASE -> iteractor.registerDeviceCodi()
+                INTENT_TOKEN_FIREBASE -> {
+                    unregisterReceiver(this)
+                    iteractor.registerDeviceCodi()
+                }
             }
         }
     }

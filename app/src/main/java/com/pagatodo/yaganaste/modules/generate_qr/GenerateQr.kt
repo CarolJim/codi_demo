@@ -1,8 +1,10 @@
 package com.pagatodo.yaganaste.modules.generate_qr
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
@@ -31,6 +33,15 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
         binding.btnGenerateQr.setOnClickListener(this)
     }
 
+    override fun onQrGenerated(bitmap: Bitmap) {
+        binding.imgQrGenerated.visibility = VISIBLE
+        binding.imgQrGenerated.setImageBitmap(bitmap)
+    }
+
+    override fun onError(msg: String) {
+        UI().showErrorSnackBar(this, msg, Snackbar.LENGTH_SHORT)
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             binding.btnGenerateQr.id -> {
@@ -40,7 +51,8 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
                 } else if (binding.txtConcept.editText!!.text.isEmpty()) {
                     UI().showErrorSnackBar(this, "Favor de verificar el concepto", Snackbar.LENGTH_SHORT)
                 } else {
-
+                    val amountDouble = if (amount.isEmpty()) 0.toDouble() else amount.replace("$", "").toDouble()
+                    iterator.generateQr(amountDouble, binding.txtConcept.editText!!.text.toString(), binding.imgQrGenerated.height)
                 }
             }
         }

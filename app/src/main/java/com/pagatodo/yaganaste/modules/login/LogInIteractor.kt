@@ -71,7 +71,7 @@ class LogInIteractor : LogInContracts.Iteractor, IRequestResult {
         prefs.saveDataBool(HAS_SESSION, true)
         prefs.saveData(SIMPLE_NAME, StringUtils.getFirstName(response.cliente.nombre)
                 .plus(SPACE).plus(response.cliente.primerApellido))
-        prefs.saveData(PHONE_NUMBER, response.emisor.cuentas[0].telefono.replace(" ", ""))
+       // prefs.saveData(PHONE_NUMBER, response.emisor.cuentas[0].telefono.replace(" ", ""))
         prefs.saveData(NAME_USER, response.cliente.nombre)
         prefs.saveData(FULL_NAME_USER, response.cliente.nombre.plus(SPACE)
                 .plus(response.cliente.primerApellido.plus(SPACE).plus(response.cliente.segundoApellido)))

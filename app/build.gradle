@@ -71,6 +71,8 @@ dependencies {
     implementation project(":camera_manager")
     // Show Configuration App By Google Chrome
     implementation 'com.facebook.stetho:stetho:1.5.0'
+    // QR Generator
+    implementation 'com.google.zxing:core:3.3.3'
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
