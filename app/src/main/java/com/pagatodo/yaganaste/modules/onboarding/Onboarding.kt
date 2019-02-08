@@ -1,11 +1,15 @@
 package com.pagatodo.yaganaste.modules.onboarding
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.pagatodo.yaganaste.R
+import com.pagatodo.yaganaste.commons.INTENT_PUSH_NOTIFICATION
 import com.pagatodo.yaganaste.databinding.ActivityOnboardingBinding
+import com.pagatodo.yaganaste.dtos.Notification
+import com.pagatodo.yaganaste.modules.money_notification.MoneyNotification
 
 class Onboarding : AppCompatActivity(), View.OnClickListener {
 
@@ -16,6 +20,12 @@ class Onboarding : AppCompatActivity(), View.OnClickListener {
         var bindView: ActivityOnboardingBinding = DataBindingUtil.setContentView(this, R.layout.activity_onboarding)
         bindView.btnLogIn.setOnClickListener(this)
         bindView.btnRegister.setOnClickListener(this)
+        if (intent.extras != null && intent.extras.get(INTENT_PUSH_NOTIFICATION) is Notification) {
+            val intent = Intent(this, MoneyNotification::class.java)
+            val notification = this.intent.extras.getParcelable<Notification>(INTENT_PUSH_NOTIFICATION)
+            intent.putExtra(INTENT_PUSH_NOTIFICATION, notification)
+            startActivity(intent)
+        }
     }
 
     override fun onClick(v: View?) {

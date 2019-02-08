@@ -10,21 +10,21 @@ class UI {
 
     fun showErrorSnackBar(rootView: Activity, message: String, length: Int) {
         val snack = Snackbar.make(rootView.window.decorView, message, length)
-        val view = snack.getView()
-        val params = view.getLayoutParams() as FrameLayout.LayoutParams
+        val view = snack.view
+        val params = view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.BOTTOM
-        view.setLayoutParams(params)
-        view.setBackgroundColor(rootView.getResources().getColor(R.color.colorRedTransparent))
+        view.layoutParams = params
+        view.setBackgroundColor(rootView.resources.getColor(R.color.colorRedTransparent))
         snack.show()
     }
 
     fun showSuccessSnackBar(rootView: Activity, message: String, length: Int) {
         val snack = Snackbar.make(rootView.window.decorView, message, length)
-        val view = snack.getView()
-        val params = view.getLayoutParams() as FrameLayout.LayoutParams
+        val view = snack.view
+        val params = view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.BOTTOM
-        view.setLayoutParams(params)
-        view.setBackgroundColor(rootView.getResources().getColor(R.color.colorGreenTransparent))
+        view.layoutParams = params
+        view.setBackgroundColor(rootView.resources.getColor(R.color.colorGreenTransparent))
         snack.show()
     }
 }

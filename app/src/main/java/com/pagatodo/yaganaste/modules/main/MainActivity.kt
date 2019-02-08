@@ -119,6 +119,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
     }
 
+    override fun unregisterReceiver() {
+        unregisterReceiver(myBroadcastReceiver)
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SEND_MONEY && resultCode == Activity.RESULT_OK) {
@@ -127,7 +132,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
     }
 
     override fun onDestroy() {
-        unregisterReceiver(myBroadcastReceiver)
+        try {
+            unregisterReceiver(myBroadcastReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         super.onDestroy()
     }
 

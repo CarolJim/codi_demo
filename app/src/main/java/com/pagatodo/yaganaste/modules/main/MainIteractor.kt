@@ -14,6 +14,7 @@ import com.pagatodo.network_manager.dtos.sender_yg.results.SenderGenericResult
 import com.pagatodo.network_manager.interfaces.IRequestResult
 import com.pagatodo.network_manager.utils.NetworkUtils.CODE_OK
 import com.pagatodo.yaganaste.App
+import com.pagatodo.yaganaste.BuildConfig.CODI_BANK_ID
 import com.pagatodo.yaganaste.commons.*
 import com.pagatodo.yaganaste.net.banxico.*
 import okhttp3.MediaType
@@ -138,6 +139,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                 if (task.isSuccessful) {
                     if (task.result!!.token != "") {
                         App.getPreferences().saveData(CODI_NOTIFICATIONS_ID, task.result!!.token)
+                        presenter.unregisterReceiver()
                         registerDeviceCodi()
                     }
                     Log.e(TAG_CODI, "Token Request Successful")
@@ -239,10 +241,10 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         val hmac_keysource = App.getPreferences().loadData(CODI_KEYSOURCE).substring(64, 128)
         val hmac = Utils.HmacSha256(hmac_keysource, App.getPreferences().loadData(PHONE_NUMBER) +
                 App.getPreferences().loadData(CODI_DV) + App.getPreferences().loadData(CLABE_NUMBER).replace(" ", "") +
-                CODI_CLABE_ID.toString() + CODI_BANK_ID.toString())
+                CODI_CLABE_ID.toString() + CODI_BANK_ID)
         /** Creación del objeto request para el Registro Subsecuente del Dispostivo */
         val request = ValidacionCuenta_Request(App.getPreferences().loadData(CLABE_NUMBER).replace(" ", ""),
-                CODI_CLABE_ID, CODI_BANK_ID, hmac, Beneficiario_Ordenante_Data(App.getPreferences().loadData(PHONE_NUMBER), App.getPreferences().loadData(CODI_DV).toInt()))
+                CODI_CLABE_ID, CODI_BANK_ID.toInt(), hmac, Beneficiario_Ordenante_Data(App.getPreferences().loadData(PHONE_NUMBER), App.getPreferences().loadData(CODI_DV).toInt()))
         val text = "d=" + Gson().toJson(request)
         /** Generación de header para indicar que el body es un tipo text/plain */
         val body = RequestBody.create(MediaType.parse("text/plain"), text)

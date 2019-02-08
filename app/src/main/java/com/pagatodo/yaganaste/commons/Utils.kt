@@ -33,9 +33,8 @@ class Utils {
                     && content.contains("SER") && content.contains("ENC") && content.contains("CRY"))
         }
 
-        fun getTokenDevice(context: Context): String {
-            return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        }
+        fun getTokenDevice(context: Context): String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+
 
         fun cipherRSA(text: String, rsaKey: String): String? {
             var result: String?

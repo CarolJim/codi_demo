@@ -21,7 +21,7 @@ class Consulta_Result(@SerializedName("info") val info: Consulta_Data, @Serializ
 class Consulta_Data(@SerializedName("listaMC") val listaMC: String, @SerializedName("ultima") val ultima: Boolean)
 
 class Mensaje_Cobro_Decipher(@SerializedName("id") val id: String, @SerializedName("cc") val cc: String,
-                             @SerializedName("mt") val mt: Long, @SerializedName("cr") val cr: String,
+                             @SerializedName("mt") val mt: Double, @SerializedName("cr") val cr: String,
                              @SerializedName("hs") val hs: Long, @SerializedName("hp") val hp: Long,
                              @SerializedName("e") val e: Long, @SerializedName("c") val c: Comprador_Vendedor_Data,
                              @SerializedName("v") val v: Comprador_Vendedor_Data)

@@ -13,6 +13,7 @@ class MainContracts {
         fun onRegisterPhoneSuccess()
         fun onVerifyCode(code: String)
         fun onVerifyPhoneNumber()
+        fun unregisterReceiver()
     }
 
     interface Iteractor {

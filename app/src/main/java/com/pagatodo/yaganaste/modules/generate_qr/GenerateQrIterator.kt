@@ -3,6 +3,7 @@ package com.pagatodo.yaganaste.modules.generate_qr
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.pagatodo.yaganaste.App
+import com.pagatodo.yaganaste.BuildConfig.CODI_BANK_ID
 import com.pagatodo.yaganaste.commons.*
 import com.pagatodo.yaganaste.dtos.*
 import javax.crypto.Cipher
