@@ -66,7 +66,6 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout8"
             android:layout_width="match_parent"
@@ -105,22 +104,33 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="O presione el ícono para escanear un código QR"
+            android:text="O seleccione una de las siguientes opciones:"
             android:textColor="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spn_banks" />
 
         <ImageView
+            android:id="@+id/img_nfc_code"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="16dp"
+            android:layout_marginEnd="8dp"
+            android:tint="@color/colorAccent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toBottomOf="@+id/txt_desc_scan_qr"
+            app:srcCompat="@drawable/baseline_nfc_24" />
+
+        <ImageView
             android:id="@+id/img_qr_code"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="16dp"
-            android:src="@mipmap/ic_qr_code"
+            android:layout_marginStart="8dp"
             android:tint="@color/colorAccent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_desc_scan_qr" />
+            app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toBottomOf="@+id/txt_desc_scan_qr"
+            app:srcCompat="@drawable/baseline_photo_camera_24" />
 
         <com.paypass.camera_source.camera.CameraSourcePreview
             android:id="@+id/camera_scan_qr"
@@ -130,10 +140,10 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/btn_action_send_money"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone"
             app:layout_constraintTop_toTopOf="@+id/txt_desc_scan_qr" />
 
         <Button
@@ -148,6 +158,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

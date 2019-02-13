@@ -11,6 +11,7 @@ class GenerateQrContracts {
 
     interface Iterator {
         fun generateQr(amount: Double, concept: String, dimen: Int)
+        fun generateNfc(amount: Double, concept: String): String
     }
 
     interface Router {

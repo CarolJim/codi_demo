@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -61,6 +62,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         super.onResume()
         iteractor.getBalance()
         iteractor.getMovements()
+        if (App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_SEND_CODI, false)) {
+            binding.btnGenerateQr.visibility = VISIBLE
+        }
     }
 
     override fun onClick(v: View?) {

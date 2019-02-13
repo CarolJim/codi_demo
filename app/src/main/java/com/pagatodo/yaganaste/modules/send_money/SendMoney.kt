@@ -7,9 +7,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.nfc.NdefMessage
+import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.KeyEvent
@@ -43,6 +46,7 @@ import com.paypass.camera_source.tracker.BarcodeTracker
 import com.paypass.camera_source.tracker.BarcodeTrackerFactory
 import org.json.JSONArray
 import java.io.IOException
+import java.io.UnsupportedEncodingException
 
 class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClickListener, BarcodeTracker.BarcodeGraphicTrackerCallback {
 
@@ -50,11 +54,11 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
     private val RC_HANDLE_CAMERA_PERM = 2
     private val RC_HANDLE_GMS = 9001
 
-
     private lateinit var binding: ActivitySendMoneyBinding
     private lateinit var bankList: List<Banks>
     private lateinit var iteractor: SendMoneyContracts.Iteractor
     private lateinit var router: SendMoneyContracts.Router
+    private lateinit var nfcAdapter: NfcAdapter
 
     private val autoFocus = true
     private var useFlash = false
@@ -66,6 +70,7 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
         binding = DataBindingUtil.setContentView(this, R.layout.activity_send_money)
         iteractor = SendMoneyIteractor(this)
         router = SendMoneyRouter(this)
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         initViews()
     }
 
@@ -97,6 +102,10 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
         binding.spnBanks.adapter = adapter
         binding.btnActionSendMoney.setOnClickListener(this)
         binding.imgQrCode.setOnClickListener(this)
+        binding.imgNfcCode.setOnClickListener(this)
+        if (nfcAdapter == null) {
+            binding.imgNfcCode.visibility = GONE
+        }
         val rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (rc == PackageManager.PERMISSION_GRANTED) {
             createCameraSource(autoFocus, useFlash)
@@ -116,6 +125,19 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
                 binding.txtDescScanQr.visibility = GONE
                 binding.imgQrCode.visibility = GONE
                 binding.cameraScanQr.visibility = VISIBLE
+            }
+            binding.imgNfcCode.id -> {
+                if (nfcAdapter.isEnabled) {
+                    Toast.makeText(this, "Leyendo de NFC", Toast.LENGTH_SHORT).show()
+                    readFromIntent(intent)
+                } else {
+                    Toast.makeText(this, "Favor de prender su NFC", Toast.LENGTH_LONG).show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+                    } else {
+                        startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                    }
+                }
             }
         }
     }
@@ -263,5 +285,34 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
                 mCameraSource = null
             }
         }
+    }
+
+    private fun readFromIntent(intent: Intent) {
+        val action = intent.action
+        if (NfcAdapter.ACTION_TAG_DISCOVERED == action
+                || NfcAdapter.ACTION_TECH_DISCOVERED == action
+                || NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
+            val rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+            var msgs = arrayOf<NdefMessage>()
+            if (rawMsgs != null) {
+                for (i in rawMsgs.indices) {
+                    msgs.plus(rawMsgs[i] as NdefMessage)
+                }
+            }
+            buildTagViews(msgs)
+        }
+    }
+
+    private fun buildTagViews(msgs: Array<NdefMessage>?) {
+        if (msgs == null || msgs.isEmpty()) return
+        var text = ""
+        val payload = msgs[0].records[0].payload
+        try {
+            // Get the Text
+            text = payload.toString(Charsets.UTF_8)
+        } catch (e: UnsupportedEncodingException) {
+            Log.e("UnsupportedEncoding", e.toString())
+        }
+        Log.e(this.javaClass.simpleName, "NFC TEXT: $text")
     }
 }
