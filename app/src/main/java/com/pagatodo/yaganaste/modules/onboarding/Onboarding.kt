@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.R
+import com.pagatodo.yaganaste.commons.HAS_SESSION
 import com.pagatodo.yaganaste.commons.INTENT_PUSH_NOTIFICATION
 import com.pagatodo.yaganaste.databinding.ActivityOnboardingBinding
 import com.pagatodo.yaganaste.dtos.Notification
@@ -25,6 +27,9 @@ class Onboarding : AppCompatActivity(), View.OnClickListener {
             val notification = this.intent.extras.getParcelable<Notification>(INTENT_PUSH_NOTIFICATION)
             intent.putExtra(INTENT_PUSH_NOTIFICATION, notification)
             startActivity(intent)
+            finish()
+        } else if (App.getPreferences().loadDataBoolean(HAS_SESSION, false)) {
+            router.presentLogInScreen()
         }
     }
 

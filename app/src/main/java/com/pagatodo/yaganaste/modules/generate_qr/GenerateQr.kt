@@ -1,10 +1,11 @@
 package com.pagatodo.yaganaste.modules.generate_qr
 
-import android.app.PendingIntent
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.nfc.*
+import android.nfc.FormatException
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
+import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
@@ -27,18 +28,13 @@ import java.io.UnsupportedEncodingException
 class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnClickListener {
 
     private lateinit var binding: ActivityGenerateQrBinding
-    private lateinit var nfcAdapter: NfcAdapter
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var writeTagFilters: Array<IntentFilter>
     private var writeMode = false
     private val iterator = GenerateQrIterator(this)
     private val router = GenerateQrRouter(this)
-    private lateinit var myTag: Tag
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_generate_qr)
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         var textWatcher = AmountTextWatcher(binding.txtAmount.editText)
         binding.txtAmount.editText!!.addTextChangedListener(textWatcher)
         binding.txtAmount.editText!!.setOnKeyListener { v, keyCode, event ->
@@ -49,13 +45,7 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
         }
         binding.btnGenerateQr.setOnClickListener(this)
         binding.btnGenerateNfc.setOnClickListener(this)
-        if (nfcAdapter == null) {
-            binding.btnGenerateNfc.visibility = GONE
-        }
-        pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-        val tagDetected = IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT)
-        writeTagFilters = arrayOf(tagDetected)
+        binding.btnGenerateNfc.visibility = GONE
     }
 
     override fun onQrGenerated(bitmap: Bitmap) {
@@ -67,55 +57,34 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
         UI().showErrorSnackBar(this, msg, Snackbar.LENGTH_SHORT)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        setIntent(intent)
-        if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action) {
-            myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-        }
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        WriteModeOff()
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        WriteModeOn()
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             binding.btnGenerateQr.id -> {
                 val amount = binding.txtAmount.editText!!.text.toString()
-                if (amount.isNotEmpty() && amount.replace("$", "").toFloat() > 8000) {
+                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > 8000) {
                     UI().showErrorSnackBar(this, "Favor de verificar el monto", Snackbar.LENGTH_SHORT)
                 } else if (binding.txtConcept.editText!!.text.isEmpty()) {
                     UI().showErrorSnackBar(this, "Favor de verificar el concepto", Snackbar.LENGTH_SHORT)
                 } else {
-                    val amountDouble = if (amount.isEmpty()) 0.toDouble() else amount.replace("$", "").toDouble()
+                    val amountDouble = if (amount.isEmpty()) 0.toDouble() else amount.replace("$", "")
+                            .replace(",", "").toDouble()
                     iterator.generateQr(amountDouble, binding.txtConcept.editText!!.text.toString(), binding.imgQrGenerated.height)
                 }
             }
             binding.btnGenerateNfc.id -> {
                 val amount = binding.txtAmount.editText!!.text.toString()
-                if (amount.isNotEmpty() && amount.replace("$", "").toFloat() > 8000) {
+                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > 8000) {
                     UI().showErrorSnackBar(this, "Favor de verificar el monto", Snackbar.LENGTH_SHORT)
                 } else if (binding.txtConcept.editText!!.text.isEmpty()) {
                     UI().showErrorSnackBar(this, "Favor de verificar el concepto", Snackbar.LENGTH_SHORT)
                 } else {
-                    val amountDouble = if (amount.isEmpty()) 0.toDouble() else amount.replace("$", "").toDouble()
-                    if (nfcAdapter.isEnabled) {
-                        Toast.makeText(this, "Compartiendo mensaje por NFC", Toast.LENGTH_LONG).show()
-                        val nfc = iterator.generateNfc(amountDouble, binding.txtConcept.editText!!.text.toString())
-                        write(nfc, myTag)
+                    val amountDouble = if (amount.isEmpty()) 0.toDouble() else amount.replace("$", "")
+                            .replace(",", "").toDouble()
+                    Toast.makeText(this, "Favor de prender su NFC", Toast.LENGTH_LONG).show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
                     } else {
-                        Toast.makeText(this, "Favor de prender su NFC", Toast.LENGTH_LONG).show()
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-                        } else {
-                            startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
-                        }
+                        startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
                     }
                 }
             }
@@ -150,21 +119,5 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
         System.arraycopy(langBytes, 0, payload, 1, langLength)
         System.arraycopy(textBytes, 0, payload, 1 + langLength, textLength)
         return NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), payload)
-    }
-
-    /******************************************************************************
-     * Enable Write********************************
-     */
-    private fun WriteModeOn() {
-        writeMode = true
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null)
-    }
-
-    /******************************************************************************
-     * Disable Write*******************************
-     */
-    private fun WriteModeOff() {
-        writeMode = false
-        nfcAdapter.disableForegroundDispatch(this)
     }
 }

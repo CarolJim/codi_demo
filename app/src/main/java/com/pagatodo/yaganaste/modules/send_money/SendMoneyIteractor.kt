@@ -88,7 +88,7 @@ class SendMoneyIteractor : SendMoneyContracts.Iteractor, IRequestResult {
         }
         /** Creación del objeto request para el envío de SPEI por CoDi */
         val request = CollectiveWireTranfer_Request(App.getPreferences().loadData(CLABE_NUMBER).replace(" ", "").toLong(),
-                codiDecypher!!.v.acc, codiDecypher!!.amo, codiDecypher!!.des, "0${codiDecypher!!.v.ban}", codiDecypher!!.v.nam,
+                codiDecypher!!.v.acc, codiDecypher!!.amo, codiDecypher!!.des, "${formatBankCode(codiDecypher!!.v.ban)}", codiDecypher!!.v.nam,
                 Utils.getNumericReference(), codiDecypher!!.typ, typeReference, App.getPreferences().loadData(PHONE_NUMBER),
                 App.getPreferences().loadData(CODI_DV).toLong(), codiDecypher!!.v.dev.split("/")[0],
                 codiDecypher!!.v.dev.split("/")[1].toLong(), newIdQr!!, serieCtr!!)
@@ -140,6 +140,17 @@ class SendMoneyIteractor : SendMoneyContracts.Iteractor, IRequestResult {
     override fun onFailed(error: Any?) {
         when (error) {
             is SenderGenericResult -> presenter.onErrorService(error.mensaje)
+        }
+    }
+
+    private fun formatBankCode(bankCode: Long): String {
+        return when (bankCode.toString().length) {
+            1 -> "00000$bankCode"
+            2 -> "0000$bankCode"
+            3 -> "000$bankCode"
+            4 -> "00$bankCode"
+            5 -> "0$bankCode"
+            else -> bankCode.toString()
         }
     }
 }

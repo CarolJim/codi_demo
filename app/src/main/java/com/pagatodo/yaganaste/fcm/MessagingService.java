@@ -78,7 +78,6 @@ public class MessagingService extends FirebaseMessagingService {
     private void sendNotification(Notification notification) {
         Intent intent = new Intent(this, Onboarding.class);
         intent.putExtra(INTENT_PUSH_NOTIFICATION, notification);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);

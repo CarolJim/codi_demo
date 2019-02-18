@@ -276,4 +276,8 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
             }
         })
     }
+
+    override fun unsubscribeCodi() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

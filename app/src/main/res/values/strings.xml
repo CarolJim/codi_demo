@@ -35,5 +35,6 @@
     </string>
     <string name="low_storage_error">Memoria de almacenamiento casi llena</string>
     <string name="invalid_qr_code">Código Qr inválido</string>
+    <string name="clean_data">Borrar datos</string>
 </resources>
 

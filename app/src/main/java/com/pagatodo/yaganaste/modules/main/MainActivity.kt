@@ -7,9 +7,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +27,7 @@ import com.pagatodo.yaganaste.databinding.ActivityMainBinding
 import com.pagatodo.yaganaste.dialogs.DialogPhoneNumber
 import com.pagatodo.yaganaste.dialogs.DialogVerificationCode
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Presenter {
 
@@ -65,6 +69,36 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         if (App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_SEND_CODI, false)) {
             binding.btnGenerateQr.visibility = VISIBLE
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val menuInflater = menuInflater
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_clean_data -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(null)
+                builder.setMessage("¿Desea borrar los datos de sesión y CoDi?")
+                        .setPositiveButton("Aceptar") { dialog, id ->
+                            /*if (App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_RECEIVE_CODI, false)) {
+                                iteractor.unsubscribeCodi()
+                            } else {*/
+                                App.getPreferences().clearPreferences()
+                                finish()
+                            //}
+                        }
+                        .setNegativeButton("Cancelar") { dialog, id ->
+                            // User cancelled the dialog
+                        }
+                builder.create()
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onClick(v: View?) {

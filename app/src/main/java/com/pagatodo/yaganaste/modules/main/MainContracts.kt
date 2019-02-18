@@ -22,6 +22,7 @@ class MainContracts {
         fun registerCodi()
         fun registerToPushService()
         fun registerDeviceCodi()
+        fun unsubscribeCodi()
     }
 
     interface Router {

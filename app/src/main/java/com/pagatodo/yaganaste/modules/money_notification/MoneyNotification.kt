@@ -33,7 +33,6 @@ class MoneyNotification : AppCompatActivity(), MoneyNotificationContracts.Presen
 
     override fun onCoDiSent(msg: String) {
         UI().showSuccessSnackBar(this, msg, Snackbar.LENGTH_LONG)
-
         Handler().postDelayed({ finish() }, 1500)
     }
 

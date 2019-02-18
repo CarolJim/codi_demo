@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
 import com.pagatodo.network_manager.utils.RequestHeaders
+import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.R
+import com.pagatodo.yaganaste.commons.HAS_SESSION
 import com.pagatodo.yaganaste.commons.UI
 import com.pagatodo.yaganaste.databinding.ActivityLogInBinding
 
@@ -25,6 +27,13 @@ class LogIn : AppCompatActivity(), LogInContracts.Presenter, View.OnClickListene
         iteractor = LogInIteractor(this)
         router = LogInRouter(this)
         bindView.btnContinue.setOnClickListener(this)
+        val hasSession = App.getPreferences().loadDataBoolean(HAS_SESSION, false)
+        val userName = RequestHeaders.getUsername()
+        if (hasSession && userName.isNotEmpty()) {
+            bindView.edtEmail.setText(userName)
+            bindView.edtEmail.isEnabled = false
+            bindView.edtPassword.requestFocus()
+        }
     }
 
     override fun onClick(v: View?) {

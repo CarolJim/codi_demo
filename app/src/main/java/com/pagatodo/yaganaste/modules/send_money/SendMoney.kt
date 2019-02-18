@@ -58,7 +58,6 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
     private lateinit var bankList: List<Banks>
     private lateinit var iteractor: SendMoneyContracts.Iteractor
     private lateinit var router: SendMoneyContracts.Router
-    private lateinit var nfcAdapter: NfcAdapter
 
     private val autoFocus = true
     private var useFlash = false
@@ -70,7 +69,6 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
         binding = DataBindingUtil.setContentView(this, R.layout.activity_send_money)
         iteractor = SendMoneyIteractor(this)
         router = SendMoneyRouter(this)
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         initViews()
     }
 
@@ -103,9 +101,7 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
         binding.btnActionSendMoney.setOnClickListener(this)
         binding.imgQrCode.setOnClickListener(this)
         binding.imgNfcCode.setOnClickListener(this)
-        if (nfcAdapter == null) {
-            binding.imgNfcCode.visibility = GONE
-        }
+        binding.imgNfcCode.visibility = GONE
         val rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (rc == PackageManager.PERMISSION_GRANTED) {
             createCameraSource(autoFocus, useFlash)
@@ -127,16 +123,11 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
                 binding.cameraScanQr.visibility = VISIBLE
             }
             binding.imgNfcCode.id -> {
-                if (nfcAdapter.isEnabled) {
-                    Toast.makeText(this, "Leyendo de NFC", Toast.LENGTH_SHORT).show()
-                    readFromIntent(intent)
+                Toast.makeText(this, "Favor de prender su NFC", Toast.LENGTH_LONG).show()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
                 } else {
-                    Toast.makeText(this, "Favor de prender su NFC", Toast.LENGTH_LONG).show()
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-                    } else {
-                        startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
-                    }
+                    startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
                 }
             }
         }
