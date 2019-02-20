@@ -177,9 +177,12 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                     if (response.body()!!.edoPet == 0) {
                         App.getPreferences().saveData(CODI_DV_OMISION, Utils.validateDv(response.body()!!.dvOmision.toString()))
                         App.getPreferences().saveDataBool(HAS_REGISTER_TO_RECEIVE_CODI, true)
-                        /* Registrar App para que pueda recibir mensajes de Cobro No Presencial */
-                        registerDeviceOmisionCodi()
-                        /* Registrar cuenta para poder generar mensajes de Cobro */
+                        /* Si el dv de registro es diferente al dvOmision, significa que el dispositivo no está registrado por Omisión
+                         * por ende se procede a mostrar el diálogo informativo para solicitar registro por omisión */
+                        if (App.getPreferences().loadDataInt(CODI_DV) != response.body()!!.dvOmision) {
+                            presenter.onRequiredOmitionRegister()
+                        }
+                        /* Registrar cuenta para poder generar mensajes de Cobro si aún no se ha realizado la validación de cuentas beneficiarias */
                         if (!App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_SEND_CODI, false)) {
                             registerBankAccountCoDi()
                         }
@@ -201,7 +204,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         })
     }
 
-    private fun registerDeviceOmisionCodi() {
+    override fun registerDeviceOmisionCodi() {
         /** Generación de HMAC con los parámetros obtenidos en [API_Banxico.GetBanxicoService.getRegistroInicial] */
         val hmac = Utils.HmacSha256(App.getPreferences().loadData(CODI_KEYSOURCE).substring(64, 128),
                 App.getPreferences().loadData(PHONE_NUMBER) + App.getPreferences().loadData(CODI_DV))
@@ -220,6 +223,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                 if (response.code() == HTTP_OK) {
                     if (response.body()!!.edoPet == 0) {
                         Log.e("CODI", "Registro por Omisión Correcto")
+                        presenter.onRegisterOmitionSuccess()
                     } else {
                         Log.e("CODI", "Error en parámetros de entrada")
                     }

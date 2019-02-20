@@ -13,9 +13,11 @@ public class AmountTextWatcher implements TextWatcher {
     private String textBefore;
     private boolean enableWriting;
     public boolean deleteText = false;
+    private double maxImport = 0.0;
 
-    public AmountTextWatcher(EditText editText) {
+    public AmountTextWatcher(EditText editText, double maxImport) {
         this.edtText = editText;
+        this.maxImport = maxImport;
     }
 
     @Override
@@ -38,7 +40,7 @@ public class AmountTextWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         Double value = StringUtils.getDoubleValue(s.toString());
         edtText.removeTextChangedListener(this);
-        if (value <= 99999.99 && enableWriting) {
+        if (value <= maxImport && enableWriting) {
             int thousands = value.intValue() / 1000;
             int lengthThousand = new String(thousands > 0 ? thousands + "" : "").length();
             if (lengthThousand > 0) {

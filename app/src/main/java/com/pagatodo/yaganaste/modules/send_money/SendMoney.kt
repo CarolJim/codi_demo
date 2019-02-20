@@ -73,7 +73,7 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
     }
 
     override fun initViews() {
-        var textWatcher = AmountTextWatcher(binding.edtAmountSendMoney)
+        var textWatcher = AmountTextWatcher(binding.edtAmountSendMoney, 99999.99)
         binding.edtAmountSendMoney.addTextChangedListener(textWatcher)
         binding.edtAmountSendMoney.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL) {

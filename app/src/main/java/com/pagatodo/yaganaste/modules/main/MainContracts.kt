@@ -11,8 +11,10 @@ class MainContracts {
         fun showLoader(message: String)
         fun onRegisterCodiSuccess()
         fun onRegisterPhoneSuccess()
+        fun onRegisterOmitionSuccess()
         fun onVerifyCode(code: String)
         fun onVerifyPhoneNumber()
+        fun onRequiredOmitionRegister()
         fun unregisterReceiver()
     }
 
@@ -22,6 +24,7 @@ class MainContracts {
         fun registerCodi()
         fun registerToPushService()
         fun registerDeviceCodi()
+        fun registerDeviceOmisionCodi()
         fun unsubscribeCodi()
     }
 

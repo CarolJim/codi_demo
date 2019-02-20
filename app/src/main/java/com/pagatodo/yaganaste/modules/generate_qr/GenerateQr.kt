@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
 import com.pagatodo.yaganaste.R
+import com.pagatodo.yaganaste.commons.CODI_MAX_IMPORT
 import com.pagatodo.yaganaste.commons.UI
 import com.pagatodo.yaganaste.databinding.ActivityGenerateQrBinding
 import com.pagatodo.yaganaste.watchers.AmountTextWatcher
@@ -35,7 +36,7 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_generate_qr)
-        var textWatcher = AmountTextWatcher(binding.txtAmount.editText)
+        var textWatcher = AmountTextWatcher(binding.txtAmount.editText, CODI_MAX_IMPORT)
         binding.txtAmount.editText!!.addTextChangedListener(textWatcher)
         binding.txtAmount.editText!!.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -61,7 +62,7 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
         when (v?.id) {
             binding.btnGenerateQr.id -> {
                 val amount = binding.txtAmount.editText!!.text.toString()
-                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > 8000) {
+                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > CODI_MAX_IMPORT) {
                     UI().showErrorSnackBar(this, "Favor de verificar el monto", Snackbar.LENGTH_SHORT)
                 } else if (binding.txtConcept.editText!!.text.isEmpty()) {
                     UI().showErrorSnackBar(this, "Favor de verificar el concepto", Snackbar.LENGTH_SHORT)
@@ -73,7 +74,7 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
             }
             binding.btnGenerateNfc.id -> {
                 val amount = binding.txtAmount.editText!!.text.toString()
-                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > 8000) {
+                if (amount.isNotEmpty() && amount.replace("$", "").replace(",", "").toFloat() > CODI_MAX_IMPORT) {
                     UI().showErrorSnackBar(this, "Favor de verificar el monto", Snackbar.LENGTH_SHORT)
                 } else if (binding.txtConcept.editText!!.text.isEmpty()) {
                     UI().showErrorSnackBar(this, "Favor de verificar el concepto", Snackbar.LENGTH_SHORT)

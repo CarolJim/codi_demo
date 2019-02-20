@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Presenter {
 
     private lateinit var binding: ActivityMainBinding
+
     private lateinit var router: MainContracts.Router
     private lateinit var iteractor: MainContracts.Iteractor
     private lateinit var dialogVerification: DialogVerificationCode
@@ -87,8 +88,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
                             /*if (App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_RECEIVE_CODI, false)) {
                                 iteractor.unsubscribeCodi()
                             } else {*/
-                                App.getPreferences().clearPreferences()
-                                finish()
+                            App.getPreferences().clearPreferences()
+                            finish()
                             //}
                         }
                         .setNegativeButton("Cancelar") { dialog, id ->
@@ -153,7 +154,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         iteractor.registerToPushService()
     }
 
+    override fun onRequiredOmitionRegister() {
+        // TODO: Mostrar diálogo para confirmación del usuario para registro por Omisión
+        //iteractor.registerDeviceOmisionCodi()
+    }
+
     override fun onRegisterPhoneSuccess() {
+        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
+    }
+
+    override fun onRegisterOmitionSuccess(){
         UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
     }
 

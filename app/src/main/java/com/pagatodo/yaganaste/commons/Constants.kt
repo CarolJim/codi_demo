@@ -29,6 +29,7 @@ const val CODI_KEYSOURCE_VALIDATION_ACC = "CODI_KEYSOURCE_VALIDATION_ACC"
 const val CODI_SER = "CODI_SER"
 const val CODI_SER_LAST_UPDATE = "CODI_SER_LAST_UPDATE"
 const val CODI_CLABE_ID = 40
+const val CODI_MAX_IMPORT = 9999999999999999.99
 
 /* Valores Tipos de Pago SPEI */
 val SPEI_TYPES = arrayOf("19 - Presencial", "20 - No Presencial", "21 - No Presencial Recurrente", "22 - No Presencial Recurrente y No Recurrente a Nombre de Terceros")
