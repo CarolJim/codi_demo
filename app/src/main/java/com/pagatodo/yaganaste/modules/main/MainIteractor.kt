@@ -238,6 +238,9 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         })
     }
 
+    /**
+     * Validacion de cuentas
+     */
     private fun registerBankAccountCoDi() {
         /** Se obtiene el HMAC con la llave de descrifrado por medio del SHA256, y se cifra la concatenación del  número de celular (nc),
          *  código de verificación de registro (dv) completado a 3 dígitos con ceros a la izquierda en caso de ser necesario, la cuenta

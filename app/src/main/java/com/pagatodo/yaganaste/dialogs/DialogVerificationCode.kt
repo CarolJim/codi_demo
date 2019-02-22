@@ -21,7 +21,7 @@ class DialogVerificationCode : DialogFragment(), View.OnClickListener {
     private lateinit var binding: DialogEnterCodiVerificationCodeBinding
     lateinit var listener: MainContracts.Presenter
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         activity = context as Activity
     }

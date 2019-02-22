@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
     }
 
     override fun onRegisterOmitionSuccess(){
-        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
+        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi (Registrpo por omisión)", Snackbar.LENGTH_LONG)
     }
 
     override fun unregisterReceiver() {

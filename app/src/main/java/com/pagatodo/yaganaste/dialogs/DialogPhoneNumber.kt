@@ -23,7 +23,7 @@ class DialogPhoneNumber : DialogFragment(), View.OnClickListener {
     private lateinit var binding: DialogEnterPhoneNumberBinding
     lateinit var listener: MainContracts.Presenter
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         activity = context as Activity
     }

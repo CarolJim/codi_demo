@@ -74,6 +74,8 @@ public class Preferences {
     }
 
     public int loadDataInt(String key) {
-        return this.preferences.getInt(key, -1);
+        String pref = this.preferences.getString(key, "");
+        return Integer.parseInt(pref);
+        //return this.preferences.getInt(key, -1);
     }
 }
