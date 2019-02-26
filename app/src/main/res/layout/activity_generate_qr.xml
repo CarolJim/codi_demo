@@ -60,6 +60,7 @@
                 android:hint="Folio de operación (OPCIONAL)" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <Button
             android:id="@+id/btn_generate_nfc"
             style="@style/Widget.AppCompat.Button.Colored"

@@ -4,8 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
-class RegistroInicial_Result(@SerializedName("gId") val gId: String, @SerializedName("dv") val dv: Int,
-                             @SerializedName("edoPet") val edoPet: Int)
+class RegistroInicial_Result(
+        @SerializedName("gId") val gId: String,
+        @SerializedName("dv") val dv: Int,
+        @SerializedName("edoPet") val edoPet: Int)
 
 class RegistroDispositivo_Result(@SerializedName("dv") val dv: Int, @SerializedName("dvOmision") val dvOmision: Int,
                                  @SerializedName("edoPet") val edoPet: Int)
@@ -66,7 +68,9 @@ class SolicitudClaveDescifrado_Result(@SerializedName("claveEnmascCr") val clave
                                       @SerializedName("selloBmx") val selloBmx: String,
                                       @SerializedName("edoPet") val edoPet: Int)
 
-class ValidacionCuentasBeneficiarias_Result(@SerializedName("cr") val claveRastreo: String, @SerializedName("edoPet") val edoPet: Int)
+class ValidacionCuentasBeneficiarias_Result(
+        @SerializedName("cr") val claveRastreo: String,
+        @SerializedName("edoPet") val edoPet: Int)
 
 class ValidacionCuentasDecryp_Data(@SerializedName("ds") val ds: Beneficiario_Ordenante_Data,
                                    @SerializedName("tc") val tc: Int, @SerializedName("cb") val cb: String,

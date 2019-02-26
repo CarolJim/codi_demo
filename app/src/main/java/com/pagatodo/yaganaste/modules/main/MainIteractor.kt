@@ -98,6 +98,8 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
             override fun onResponse(call: Call<RegistroInicial_Result>, response: Response<RegistroInicial_Result>) {
                 /** Si el servicio responde correctamente, se tiene que validar la bandera [edoPet] para
                  * corroborar que haya sido exitoso */
+                Log.e("CODI", "registerCodi response: "+response.toString())
+
                 if (response.code() == HTTP_OK) {
                     if (response.body()!!.edoPet == 0) {
                         /** Se guarda en preferencias el Id del proyecto de Google que regresa cifrado de Banxico,
@@ -106,26 +108,29 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                         App.getPreferences().saveData(CODI_DV, Utils.validateDv(response.body()!!.dv.toString()))
                         presenter.onRegisterCodiSuccess()
                     } else {
-                        Log.e("CODI", "Error en parámetros de entrada")
+                        Log.e("CODI", "Error en parámetros de entrada: "+response.toString())
                         presenter.onErrorService("Error en registro CoDi")
                     }
                 } else {
-                    Log.e("CODI", "Error en servicio http: " + response.code())
+                    Log.e("CODI", "Error en servicio http: " + response.toString())
                     presenter.onErrorService("Error en registro CoDi")
                 }
             }
 
             override fun onFailure(call: Call<RegistroInicial_Result>, t: Throwable) {
-                Log.e("CODI", "Error en servicio http: " + t.message)
-                presenter.onErrorService("Error en registro CoDi")
+                Log.e("CODI", "Error en servicio http: " + t.stackTrace)
+                presenter.onErrorService("Error en registro CoDi ")
             }
         })
     }
 
+    /*
+    Este metodo se ejecta siempre al iniciar sesión en ya Ganaste
+     */
     override fun registerToPushService() {
         /** Obtener del Id del proyecto Google de la cadena cifrada que regresa Banxico en el Registro Inicial */
-        val aes = App.getPreferences().loadData(CODI_KEYSOURCE).substring(0, 32)
-        val iv_aes = App.getPreferences().loadData(CODI_KEYSOURCE).substring(32, 64)
+        val aes = App.getPreferences().loadData(CODI_KEYSOURCE).substring(0, 32) //key AES
+        val iv_aes = App.getPreferences().loadData(CODI_KEYSOURCE).substring(32, 64) //Vector de inicialización
         val googleId = Utils.Aes128CbcPkcs(aes, iv_aes, App.getPreferences().loadData(CODI_GOOGLE_ID),
                 Cipher.DECRYPT_MODE)
         /** Se crea un objeto [FirebaseOptions] para acceder al proyecto de Notificaciones de Banxico */
@@ -173,6 +178,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
          * se ha registrado correctamente para recibir mensajes de Cobro Presencial y No Presencial */
         API_Banxico().getCustomService().getRegistroDispositivo(body).enqueue(object : Callback<RegistroDispositivo_Result> {
             override fun onResponse(call: Call<RegistroDispositivo_Result>, response: Response<RegistroDispositivo_Result>) {
+                Log.e("CODI", "registerDeviceCodi response: "+response.toString())
                 if (response.code() == HTTP_OK) {
                     if (response.body()!!.edoPet == 0) {
                         App.getPreferences().saveData(CODI_DV_OMISION, Utils.validateDv(response.body()!!.dvOmision.toString()))
@@ -250,8 +256,12 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                 App.getPreferences().loadData(CODI_DV) + App.getPreferences().loadData(CLABE_NUMBER).replace(" ", "") +
                 CODI_CLABE_ID.toString() + CODI_BANK_ID)
         /** Creación del objeto request para el Registro Subsecuente del Dispostivo */
-        val request = ValidacionCuenta_Request(App.getPreferences().loadData(CLABE_NUMBER).replace(" ", ""),
-                CODI_CLABE_ID, CODI_BANK_ID.toInt(), hmac, Beneficiario_Ordenante_Data(App.getPreferences().loadData(PHONE_NUMBER), App.getPreferences().loadData(CODI_DV).toInt()))
+        val request = ValidacionCuenta_Request(
+                App.getPreferences().loadData(CLABE_NUMBER).replace(" ", ""),
+                CODI_CLABE_ID, CODI_BANK_ID.toInt(),
+                hmac,
+                Beneficiario_Ordenante_Data(App.getPreferences().loadData(PHONE_NUMBER),
+                        App.getPreferences().loadData(CODI_DV).toInt()))
         val text = "d=" + Gson().toJson(request)
         /** Generación de header para indicar que el body es un tipo text/plain */
         val body = RequestBody.create(MediaType.parse("text/plain"), text)
@@ -259,6 +269,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
          * validar la cuenta con la cual se generaran los mensajes de cobro */
         API_Banxico().getCustomService().getValidacionCuentasBeneficiarias(body).enqueue(object : Callback<ValidacionCuentasBeneficiarias_Result> {
             override fun onResponse(call: Call<ValidacionCuentasBeneficiarias_Result>, response: Response<ValidacionCuentasBeneficiarias_Result>) {
+                Log.e("CODI", "registerBankAccountCoDi response: "+response.toString())
                 if (response.code() == HTTP_OK) {
                     if (response.body()!!.edoPet == 0) {
                         /* Con esta función, se genera un arreglo de 64 bytes, que se usará de la siguiente manera:
@@ -272,14 +283,15 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                         presenter.onErrorService("Error en registro CoDi")
                     }
                 } else {
-                    Log.e("CODI", "Error en servicio http: " + response.code())
+                    Log.e("CODI", "Error en servicio http: " + response.code()+ "\n"+
+                    response.toString())
                     presenter.onErrorService("Error en registro CoDi")
                 }
             }
 
             override fun onFailure(call: Call<ValidacionCuentasBeneficiarias_Result>, t: Throwable) {
-                Log.e("CODI", "Error en servicio http: " + t.message)
-                presenter.onErrorService("Error en registro CoDi")
+                Log.e("CODI", "Error en servicio http: " + t.stackTrace)
+                presenter.onErrorService("Error en registro CoDi - Validación de cuenta beneficiario: "+t.message)
             }
         })
     }
