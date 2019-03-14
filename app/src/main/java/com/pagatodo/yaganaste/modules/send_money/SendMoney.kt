@@ -32,13 +32,17 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.pagatodo.network_manager.dtos.wallet.results.CodeSmsResult
 import com.pagatodo.yaganaste.R
 import com.pagatodo.yaganaste.commons.BANKS_JSON
 import com.pagatodo.yaganaste.commons.UI
 import com.pagatodo.yaganaste.commons.Utils
 import com.pagatodo.yaganaste.databinding.ActivitySendMoneyBinding
+import com.pagatodo.yaganaste.dialogs.DialogAcceptCharge
 import com.pagatodo.yaganaste.dtos.Banks
 import com.pagatodo.yaganaste.dtos.CoDi
+import com.pagatodo.yaganaste.dtos.CoDi_Decypher
+import com.pagatodo.yaganaste.modules.money_notification.MoneyNotification
 import com.pagatodo.yaganaste.watchers.AmountTextWatcher
 import com.pagatodo.yaganaste.watchers.CardTextWatcher
 import com.paypass.camera_source.camera.CameraSource
@@ -50,6 +54,7 @@ import java.io.UnsupportedEncodingException
 
 class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClickListener, BarcodeTracker.BarcodeGraphicTrackerCallback {
 
+
     // Permission request codes need to be < 256
     private val RC_HANDLE_CAMERA_PERM = 2
     private val RC_HANDLE_GMS = 9001
@@ -58,6 +63,8 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
     private lateinit var bankList: List<Banks>
     private lateinit var iteractor: SendMoneyContracts.Iteractor
     private lateinit var router: SendMoneyContracts.Router
+    private lateinit var qr:CoDi
+
 
     private val autoFocus = true
     private var useFlash = false
@@ -142,12 +149,23 @@ class SendMoney : AppCompatActivity(), SendMoneyContracts.Presenter, View.OnClic
             val content = barcode.displayValue
             if (Utils.isValidCoDi(content)) {
                 qrScanned = true
-                val qr = Gson().fromJson(content, CoDi::class.java)
+                qr = Gson().fromJson(content, CoDi::class.java)
                 iteractor.proccessQrRead(qr)
             } else {
                 UI().showErrorSnackBar(this, getString(R.string.invalid_qr_code), Snackbar.LENGTH_SHORT)
             }
         }
+    }
+
+    override fun onCodiDescipher(codiDecypher: CoDi_Decypher?) {
+        val dialogAcceptCharge = DialogAcceptCharge()
+        dialogAcceptCharge.listener = this;
+        dialogAcceptCharge.codiDecypher = codiDecypher!!
+        dialogAcceptCharge.show(supportFragmentManager, this::class.java.simpleName)
+    }
+
+    override fun onAcceptCodiTransfer(codiDecypher: CoDi_Decypher?) {
+        iteractor.sendCodiPayment(codiDecypher)
     }
 
     override fun onMoneySent() {

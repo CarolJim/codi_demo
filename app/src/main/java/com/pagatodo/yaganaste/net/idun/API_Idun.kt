@@ -19,7 +19,7 @@ open class API_Idun {
     }
 
     interface GetIdunService {
-        @POST("ProcessCollectWireTransfer")
+        @POST("CollectWireTransfer")
         fun getCollectiveWireTransfer(@Body requestBody: RequestBody): Call<CollectWireTransfer_Result>
     }
 }

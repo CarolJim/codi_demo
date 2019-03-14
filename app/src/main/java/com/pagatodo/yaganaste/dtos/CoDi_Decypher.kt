@@ -20,10 +20,14 @@ import com.google.gson.annotations.SerializedName
  *              22 - Cobros recurrentes y no recurrentes a nombre de un tercero
  * @param v   - [CoDi_Decypher]
  */
-class CoDi_Decypher(@SerializedName("IDC") val idc: String, @SerializedName("DES") val des: String,
-                    @SerializedName("AMO") val amo: Double, @SerializedName("COM") val com: Int,
-                    @SerializedName("DAT") val dat: Long, @SerializedName("TYP") val typ: Int,
-                    @SerializedName("v") val v: V_Decypher) : Parcelable {
+class CoDi_Decypher(
+        @SerializedName("IDC") val idc: String,
+        @SerializedName("DES") val des: String,
+        @SerializedName("AMO") var amo: Double,
+        @SerializedName("COM") val com: Int,
+        @SerializedName("DAT") val dat: Long,
+        @SerializedName("TYP") val typ: Int,
+        @SerializedName("v") val v: V_Decypher) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readString(),

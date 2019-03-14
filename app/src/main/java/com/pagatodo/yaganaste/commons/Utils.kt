@@ -12,9 +12,6 @@ import com.pagatodo.yaganaste.dtos.Info_Cuenta
 import com.pagatodo.yaganaste.net.banxico.ValidacionCuentasDecryp_Data
 import org.apache.commons.codec.binary.Hex
 import java.math.BigInteger
-import java.security.KeyFactory
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import javax.crypto.Cipher
@@ -22,6 +19,16 @@ import javax.crypto.Mac
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.experimental.xor
+import android.provider.SyncStateContract.Helpers.update
+import org.spongycastle.asn1.ASN1InputStream
+import org.spongycastle.asn1.ASN1OctetString
+import org.spongycastle.asn1.ASN1Sequence
+import org.spongycastle.asn1.util.ASN1Dump
+import org.spongycastle.jce.provider.BouncyCastleProvider
+import java.security.*
+import java.security.Security.addProvider
+
+
 
 
 class Utils {
@@ -35,6 +42,68 @@ class Utils {
 
         fun getTokenDevice(context: Context): String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
+        fun firm_RSASSA_PKCS1_v1_5() {
+
+            val provider = BouncyCastleProvider()
+
+            Security.removeProvider("BC");
+            Security.insertProviderAt(provider as Provider?,1);
+
+            val keyGen = KeyPairGenerator.getInstance("RSA", "SC")
+
+            keyGen.initialize(256, SecureRandom())
+
+            val keyPair = keyGen.generateKeyPair()
+            val signature =  Signature.getInstance("SHA256withRSA","SC")
+
+            //generate a signature
+            signature.initSign(keyPair.getPrivate())
+
+            //"abc"
+            val message = "abc".toByteArray()
+            signature.update(message)
+
+            val sigBytes = signature.sign()
+
+            // open the signature
+            val cipher = Cipher.getInstance("RSA/None/PKCS1Padding", "SC")
+            cipher.init(Cipher.DECRYPT_MODE, keyPair.getPublic())
+
+            val decSig = cipher.doFinal(sigBytes)
+
+            // parse the signature
+            val aIn = ASN1InputStream(decSig)
+            val seq = aIn.readObject() as ASN1Sequence
+
+            Log.e(TAG_CODI, "dumpAsString: ${ASN1Dump.dumpAsString(seq)}")
+
+            // grab a digest of the correct type
+            val hash = MessageDigest.getInstance("SHA-256", "SC")
+
+            hash.update(message);
+
+            val sigHash = seq.getObjectAt(1) as ASN1OctetString
+
+            Log.e(TAG_CODI, "hash: ${hash.toString()}");
+            Log.e(TAG_CODI, "hash digest: ${Base64.encodeToString(hash.digest(),Base64.DEFAULT)}");
+            Log.e(TAG_CODI, "sighash: ${sigHash.octets.toString()}");
+            Log.e(TAG_CODI, "sighash octects: ${Base64.encodeToString(sigHash.octets, Base64.DEFAULT)}");
+
+
+            if (MessageDigest.isEqual(hash.digest(), sigHash.octets))
+            {
+                Log.e(TAG_CODI, "hash verification succeeded");
+            }
+            else
+            {
+                Log.e(TAG_CODI, "hash verification failed");
+            }
+
+            val result = Base64.encodeToString(sigHash.octets, Base64.DEFAULT)
+            Log.e(TAG_CODI, "Sello digital RSASSA-PKCS1-v1_5: $result")
+
+
+        }
 
         fun cipherRSA(text: String, rsaKey: String): String? {
             var result: String?
@@ -146,6 +215,8 @@ class Utils {
             while (secondIdHex.length < 6) {
                 secondIdHex = "0$secondIdHex"
             }
+
+            App.getPreferences().saveData(CODI_IDC_TYPE19, readQrId + newIdHex + secondIdHex)
             return readQrId + newIdHex + secondIdHex
         }
 

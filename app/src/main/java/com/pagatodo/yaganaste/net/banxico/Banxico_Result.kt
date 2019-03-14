@@ -2,6 +2,7 @@ package com.pagatodo.yaganaste.net.banxico
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
 class RegistroInicial_Result(
@@ -10,7 +11,11 @@ class RegistroInicial_Result(
         @SerializedName("edoPet") val edoPet: Int)
 
 class RegistroDispositivo_Result(@SerializedName("dv") val dv: Int, @SerializedName("dvOmision") val dvOmision: Int,
-                                 @SerializedName("edoPet") val edoPet: Int)
+                                 @SerializedName("edoPet") val edoPet: Int){
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+}
 
 class RegistroDispositivoPorOmision_Result(@SerializedName("edoPet") val edoPet: Int)
 
@@ -26,11 +31,19 @@ class Mensaje_Cobro_Decipher(@SerializedName("id") val id: String, @SerializedNa
                              @SerializedName("mt") val mt: Double, @SerializedName("cr") val cr: String,
                              @SerializedName("hs") val hs: Long, @SerializedName("hp") val hp: Long,
                              @SerializedName("e") val e: Long, @SerializedName("c") val c: Comprador_Vendedor_Data,
-                             @SerializedName("v") val v: Comprador_Vendedor_Data)
+                             @SerializedName("v") val v: Comprador_Vendedor_Data){
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+}
 
-class Comprador_Vendedor_Data(@SerializedName("nb") val nb: String, @SerializedName("ci") val ci: Long,
-                              @SerializedName("tc") val tc: Long, @SerializedName("cb") val cb: String,
-                              @SerializedName("dv") val dv: Long, @SerializedName("nc") val nc: String) : Parcelable {
+class Comprador_Vendedor_Data(
+        @SerializedName("nb") val nb: String,
+        @SerializedName("ci") val ci: Long,
+        @SerializedName("tc") val tc: Long,
+        @SerializedName("cb") val cb: String,
+        @SerializedName("dv") val dv: Long,
+        @SerializedName("nc") val nc: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readLong(),
@@ -61,6 +74,10 @@ class Comprador_Vendedor_Data(@SerializedName("nb") val nb: String, @SerializedN
             return arrayOfNulls(size)
         }
     }
+
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
 }
 
 class SolicitudClaveDescifrado_Result(@SerializedName("claveEnmascCr") val claveEnmascarada: String,
@@ -72,7 +89,21 @@ class ValidacionCuentasBeneficiarias_Result(
         @SerializedName("cr") val claveRastreo: String,
         @SerializedName("edoPet") val edoPet: Int)
 
-class ValidacionCuentasDecryp_Data(@SerializedName("ds") val ds: Beneficiario_Ordenante_Data,
-                                   @SerializedName("tc") val tc: Int, @SerializedName("cb") val cb: String,
-                                   @SerializedName("ci") val ci: Int, @SerializedName("hmac") val hmac: String,
-                                   @SerializedName("cr") val cr: String, @SerializedName("rv") val rv: Int)
+class ConsultaValidacionCuentasBeneficiarias_Result(
+        @SerializedName("infCif") val infCif: String, //Información Cifrada de la cuenta (Beneficiario_Ordenante_Data)
+        @SerializedName("edoPet") val edoPet: Int)
+
+class ValidacionCuentasDecryp_Data(
+        @SerializedName("ds") val ds: Beneficiario_Ordenante_Data,
+        @SerializedName("tc") val tc: Int,
+        @SerializedName("cb") val cb: String,
+        @SerializedName("ci") val ci: Int,
+       // @SerializedName("nombreCDA") val nombreCDA: String,
+        @SerializedName("hmac") val hmac: String,
+        @SerializedName("cr") val cr: String,
+        @SerializedName("rv") val rv: Int)
+
+//todo implementar funcionalidad de consulta de cobros pendientes
+class consultaEstadoOperacion_Result(
+
+)

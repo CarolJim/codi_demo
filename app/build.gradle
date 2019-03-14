@@ -83,6 +83,10 @@ dependencies {
     implementation 'org.apache.commons:com.springsource.org.apache.commons.codec:1.6.0'
     // Firebase
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+    //spongy castle to implementing digital firm RSASSA-PKCS1-v1_5
+    implementation 'com.madgag.spongycastle:bcpkix-jdk15on:1.58.0.0'
+    implementation 'com.madgag.spongycastle:bcpg-jdk15on:1.58.0.0'
 }
 
 //apply plugin: 'com.google.gms.google-services'

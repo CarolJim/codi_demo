@@ -7,4 +7,22 @@
         android:icon="@drawable/baseline_block_24"
         android:title="@string/clean_data"
         app:showAsAction="always" />
+
+    <item android:id="@+id/consult_codi_statusaccount"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="Consultar validación de cuenta" />
+
+    <item android:id="@+id/consult_codi_charges"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="Consultar estados de cobros" />
+
+    <item android:id="@+id/register_default_codi"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="Registar dispositivo por omisión" />
+
+    <item android:id="@+id/logOut"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="Cerrar sesión" />
+
+
 </menu>

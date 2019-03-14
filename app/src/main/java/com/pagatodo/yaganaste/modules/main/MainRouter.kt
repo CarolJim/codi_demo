@@ -8,6 +8,10 @@ import com.pagatodo.yaganaste.modules.generate_qr.GenerateQr
 import com.pagatodo.yaganaste.modules.send_money.SendMoney
 
 class MainRouter : MainContracts.Router {
+    override fun presentConsultValidationScreen() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     var activity: Activity
 
     constructor(activity: Activity) {

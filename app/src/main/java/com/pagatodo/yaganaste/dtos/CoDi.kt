@@ -14,8 +14,11 @@ import com.google.gson.annotations.SerializedName
  * @param ic - [IC]
  * @param cry - Cadena de validación de integridad del mensaje de cobro (HMAC)
  */
-class CoDi(@SerializedName("TYP") val typ: Int, @SerializedName("v") val v: V,
-           @SerializedName("ic") val ic: IC, @SerializedName("CRY") val cry: String) : Parcelable {
+class CoDi(
+        @SerializedName("TYP") val typ: Int,
+        @SerializedName("v") val v: V,
+        @SerializedName("ic") val ic: IC,
+        @SerializedName("CRY") val cry: String) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
@@ -78,7 +81,8 @@ class V(@SerializedName("DEV") val dev: String) : Parcelable {
  *              número 1 y reiniciarlo cada cierto tiempo, pudiendo ser diario
  * @param enc - Cadena del mensaje de cobro cifrad
  */
-class IC(@SerializedName("IDC") val idc: String, @SerializedName("SER") val ser: Int,
+class IC(@SerializedName("IDC") val idc: String,
+         @SerializedName("SER") val ser: Int,
          @SerializedName("ENC") val enc: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),

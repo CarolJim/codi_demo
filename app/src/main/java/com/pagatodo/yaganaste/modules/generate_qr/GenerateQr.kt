@@ -14,6 +14,9 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -23,6 +26,7 @@ import com.pagatodo.yaganaste.commons.CODI_MAX_IMPORT
 import com.pagatodo.yaganaste.commons.UI
 import com.pagatodo.yaganaste.databinding.ActivityGenerateQrBinding
 import com.pagatodo.yaganaste.watchers.AmountTextWatcher
+import kotlinx.android.synthetic.main.activity_generate_qr.*
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 
@@ -32,6 +36,7 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
     private var writeMode = false
     private val iterator = GenerateQrIterator(this)
     private val router = GenerateQrRouter(this)
+    private val noPresential = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +49,30 @@ class GenerateQr : AppCompatActivity(), GenerateQrContracts.Presenter, View.OnCl
             }
             false
         }
+        val adapterTypes = ArrayAdapter<String>(this,
+                R.layout.support_simple_spinner_dropdown_item, arrayOf("1", "2"))
+        binding.spinnerTypes.adapter = adapterTypes
+        binding.spinnerTypes.setSelection(0)
+
+        val adapterPayTypes = ArrayAdapter<String>(this,
+                R.layout.support_simple_spinner_dropdown_item, arrayOf("19", "20", "21", "22"))
+        binding.spinnerPaytype.adapter = adapterPayTypes
+        binding.spinnerPaytype.setSelection(0)
+
+        binding.spinnerPaytype.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                if (!binding.spinnerPaytype.selectedItem.equals("19")){
+                    binding.formNoPresential.visibility = VISIBLE
+                    binding.formPresential.visibility = GONE
+                }
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+            }
+
+        }
+
         binding.btnGenerateQr.setOnClickListener(this)
         binding.btnGenerateNfc.setOnClickListener(this)
         binding.btnGenerateNfc.visibility = GONE

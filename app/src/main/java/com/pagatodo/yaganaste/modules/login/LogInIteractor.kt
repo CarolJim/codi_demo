@@ -12,6 +12,7 @@ import com.pagatodo.network_manager.utils.RequestHeaders
 import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.BuildConfig
 import com.pagatodo.yaganaste.commons.*
+import javax.crypto.Cipher
 
 class LogInIteractor : LogInContracts.Iteractor, IRequestResult {
 
@@ -27,6 +28,19 @@ class LogInIteractor : LogInContracts.Iteractor, IRequestResult {
         RequestHeaders.setUsername(user)
         RequestHeaders.setTokendevice(Utils.getTokenDevice(App.getContext()))
         try {
+            /**
+             * 4.3.8 Almacenamiento de la información en el dispositivo
+             */
+            var sec = Utils.Sha512Hex(pss + App.getPreferences().loadData(CODI_KEYSOURCE))
+            val IDC = Utils.getCodiNewId("")
+            var cspv = Utils.Sha512Hex( IDC + App.getPreferences().loadData(CODI_KEYSOURCE) +  App.getPreferences().loadData(CODI_SER) )
+            val seccipher = Utils.Aes128CbcPkcs(
+                    cspv.substring(0, 32),
+                    cspv.substring(32, 64),
+                    sec,
+                    Cipher.ENCRYPT_MODE)
+            App.getPreferences().saveData(CODI_SEC_INFO, seccipher)
+
             SenderApi.logIn(App.getContext(), request, this, "http://189.201.137.21:8031/ServicioYaGanasteAdtvo.svc/IniciarSesionSimpleUYU")
         } catch (e: Exception) {
             presenter.onErrorService("Intente de nuevo más tarde")

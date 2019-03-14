@@ -1,15 +1,18 @@
 package com.pagatodo.yaganaste.modules.main
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -18,14 +21,23 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.FirebaseApp
+import com.pagatodo.network_manager.WsConsumer
+import com.pagatodo.network_manager.apis.GenericApi
+import com.pagatodo.network_manager.apis.SenderApi
+import com.pagatodo.network_manager.dtos.sender_yg.results.LogOutResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.MovementsItemResult
+import com.pagatodo.network_manager.utils.RequestHeaders
 import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.BuildConfig
 import com.pagatodo.yaganaste.R
 import com.pagatodo.yaganaste.commons.*
 import com.pagatodo.yaganaste.databinding.ActivityMainBinding
+import com.pagatodo.yaganaste.dialogs.DialogDefaultRegister
 import com.pagatodo.yaganaste.dialogs.DialogPhoneNumber
 import com.pagatodo.yaganaste.dialogs.DialogVerificationCode
+import com.pagatodo.yaganaste.modules.login.LogIn
+import com.pagatodo.yaganaste.modules.login.LogInIteractor
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -37,8 +49,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
     private lateinit var iteractor: MainContracts.Iteractor
     private lateinit var dialogVerification: DialogVerificationCode
 
+    override fun onLogOut() {
+        finish()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this);
+
+        /*example RSASSA-PKCS1-v1_5*/
+        //Utils.firm_RSASSA_PKCS1_v1_5()
+
         /* Initialize objects */
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         router = MainRouter(this)
@@ -49,6 +69,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         /* Init views */
         binding.btnSendMoney.setOnClickListener(this)
         binding.btnGenerateQr.setOnClickListener(this)
+        binding.btnConsultValidation.setOnClickListener(this)
+        binding.btnValidateAccount.setOnClickListener(this)
         binding.rcvRecentMovements.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         /* Se registra un broadcast para esperar la obtención de Token de Firebase */
         registerReceiver(myBroadcastReceiver, IntentFilter(INTENT_TOKEN_FIREBASE))
@@ -98,6 +120,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
                 builder.create()
 
             }
+
+            R.id.consult_codi_charges -> {
+                iteractor.consultStatusCoDiCharges(1)
+            }
+
+            R.id.consult_codi_statusaccount -> {
+                iteractor.consultRegisterBankAccountCoDi()
+            }
+
+            R.id.logOut -> {
+               iteractor.closeSession()
+
+            }
+
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -106,6 +143,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         when (v?.id) {
             binding.btnSendMoney.id -> router.presentSendMoneyScreen()
             binding.btnGenerateQr.id -> router.presentGenerateQrScreen()
+            binding.btnConsultValidation.id -> iteractor.consultRegisterBankAccountCoDi()
+            binding.btnValidateAccount.id -> {
+                ///* Registrar cuenta para poder generar mensajes de Cobro si aún no se ha realizado la validación de cuentas beneficiarias */
+                if (!App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_SEND_CODI, false)) {
+                    iteractor.registerBankAccountCoDi()
+                    Log.e(TAG_CODI, "Iniciando proceso para validar cuenta beneficiaria")
+                }else{
+                    UI().showSuccessSnackBar(this, "Ya se ha validado esta cuenta",Snackbar.LENGTH_SHORT)
+                    binding.btnValidateAccount.visibility = GONE
+                }
+            }
+
+
         }
     }
 
@@ -141,6 +191,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         iteractor.registerCodi()
     }
 
+    override fun onValidationSucces(mensaje: String, showBtn: Boolean) {
+        UI().showSuccessSnackBar(this, mensaje, Snackbar.LENGTH_LONG)
+        if (showBtn) {
+            binding.btnConsultValidation.visibility = VISIBLE
+            binding.btnValidateAccount.visibility = GONE
+            binding.btnGenerateQr.visibility = GONE
+
+        }
+        else {
+            binding.btnConsultValidation.visibility = GONE
+            binding.btnValidateAccount.visibility = VISIBLE
+            binding.btnGenerateQr.visibility = VISIBLE
+        }
+    }
+
     override fun onVerifyCode(code: String) {
         /** Se genera un SHA 512 con el código de verificación recibido SMS, el id Hardware, el nombre del paquete de
          * la App y el número de teléfono */
@@ -154,23 +219,43 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainContracts.Pr
         iteractor.registerToPushService()
     }
 
-    override fun onRequiredOmitionRegister() {
-        // TODO: Mostrar diálogo para confirmación del usuario para registro por Omisión
-        //iteractor.registerDeviceOmisionCodi()
-    }
 
-    override fun onRegisterPhoneSuccess() {
-        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
+    override fun onRegisterPhoneSuccess(nopresential: Boolean) {
+        if (nopresential){
+            UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi", Snackbar.LENGTH_LONG)
+        }else {
+            UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi (Esquema presencial)", Snackbar.LENGTH_LONG)
+        }
+
+        binding.btnValidateAccount.visibility= VISIBLE
     }
 
     override fun onRegisterOmitionSuccess(){
-        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi (Registrpo por omisión)", Snackbar.LENGTH_LONG)
+        UI().showSuccessSnackBar(this, "Registrado correctamente para recepción de CoDi (Registro por omisión)", Snackbar.LENGTH_LONG)
     }
 
     override fun unregisterReceiver() {
         unregisterReceiver(myBroadcastReceiver)
     }
 
+    override fun onRequiredOmitionRegister() {
+        val dialog = DialogDefaultRegister()
+        dialog.listener = this;
+        dialog.show(supportFragmentManager, this::class.java.simpleName)
+        //UI().showSuccessSnackBar(this, "Registro por omisión", Snackbar.LENGTH_LONG)
+        Log.e(TAG_CODI, "Dialogo Registro por omisión")
+        //iteractor.registerDeviceOmisionCodi()
+
+    }
+
+    override fun onCancelDefaultRegster() {
+        App.getPreferences().saveDataBool(CODI_DEFAULT_DEVICE, false)
+        this.onErrorService("Para cambiar la configuración dirigete al menú")
+    }
+
+    override fun onAcceptDefaultRegister() {
+        iteractor.registerDeviceOmisionCodi()
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

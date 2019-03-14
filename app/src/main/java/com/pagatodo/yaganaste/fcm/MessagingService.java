@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 import static com.pagatodo.yaganaste.commons.ConstantsKt.CODI_NOTIFICATIONS_ID;
 import static com.pagatodo.yaganaste.commons.ConstantsKt.INTENT_PUSH_NOTIFICATION;
 import static com.pagatodo.yaganaste.commons.ConstantsKt.INTENT_TOKEN_FIREBASE;
+import static com.pagatodo.yaganaste.commons.ConstantsKt.TAG_CODI;
 
 public class MessagingService extends FirebaseMessagingService {
 
@@ -40,9 +41,10 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        Log.e(TAG, "From: " + remoteMessage.getFrom());
         if (remoteMessage.getData() != null) {
             String json = remoteMessage.getData().get("data");
+            Log.e(TAG_CODI,"Notification json recived: "+json);
             Notification notification = new Gson().fromJson(json, Notification.class);
             if (Utils.Companion.isAppIsInBackground(getApplicationContext())) {
                 sendNotification(notification);

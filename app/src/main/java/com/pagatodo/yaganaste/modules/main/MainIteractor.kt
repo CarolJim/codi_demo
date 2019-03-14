@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.pagatodo.network_manager.apis.SenderApi
 import com.pagatodo.network_manager.dtos.sender_yg.requests.MovementsRequest
 import com.pagatodo.network_manager.dtos.sender_yg.results.BalanceResult
+import com.pagatodo.network_manager.dtos.sender_yg.results.LogOutResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.MovementsResult
 import com.pagatodo.network_manager.dtos.sender_yg.results.SenderGenericResult
 import com.pagatodo.network_manager.interfaces.IRequestResult
@@ -16,6 +17,7 @@ import com.pagatodo.network_manager.utils.NetworkUtils.CODE_OK
 import com.pagatodo.yaganaste.App
 import com.pagatodo.yaganaste.BuildConfig.CODI_BANK_ID
 import com.pagatodo.yaganaste.commons.*
+import com.pagatodo.yaganaste.dtos.CoDi_Decypher
 import com.pagatodo.yaganaste.net.banxico.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -28,6 +30,13 @@ import javax.crypto.Cipher
 
 
 class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iteractor, IRequestResult {
+    override fun closeSession() {
+        try {
+            SenderApi.logOut(App.getContext(), null, this, "http://189.201.137.21:8031/ServicioYaGanasteAdtvo.svc/CerrarSesion")
+        } catch (e: Exception) {
+            presenter.onErrorService("Intente de nuevo más tarde")
+        }
+    }
 
     override fun getBalance() {
         presenter.showLoader("Obteniendo saldo")
@@ -63,6 +72,8 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                     presenter.onErrorService(data.mensaje)
                 }
             }
+            is LogOutResult -> presenter.onLogOut()
+
         }
     }
 
@@ -180,19 +191,21 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
             override fun onResponse(call: Call<RegistroDispositivo_Result>, response: Response<RegistroDispositivo_Result>) {
                 Log.e("CODI", "registerDeviceCodi response: "+response.toString())
                 if (response.code() == HTTP_OK) {
+                    Log.e(TAG_CODI, "Response regSubsecuente: ${response.body()}")
                     if (response.body()!!.edoPet == 0) {
                         App.getPreferences().saveData(CODI_DV_OMISION, Utils.validateDv(response.body()!!.dvOmision.toString()))
                         App.getPreferences().saveDataBool(HAS_REGISTER_TO_RECEIVE_CODI, true)
                         /* Si el dv de registro es diferente al dvOmision, significa que el dispositivo no está registrado por Omisión
                          * por ende se procede a mostrar el diálogo informativo para solicitar registro por omisión */
-                        if (App.getPreferences().loadDataInt(CODI_DV) != response.body()!!.dvOmision) {
+                        if (App.getPreferences().loadDataInt(CODI_DV) != response.body()!!.dvOmision
+                                && App.getPreferences().loadDataBoolean(CODI_DEFAULT_DEVICE, true)) {
+                            //App.getPreferences().saveDataBool(HAS_REGISTER_TO_RECEIVE_CODI, false)
                             presenter.onRequiredOmitionRegister()
+                            Log.e(TAG_CODI, "debes realizar registro por omisión")
+                        }else{
+                            presenter.onRegisterPhoneSuccess(true)
                         }
-                        /* Registrar cuenta para poder generar mensajes de Cobro si aún no se ha realizado la validación de cuentas beneficiarias */
-                        if (!App.getPreferences().loadDataBoolean(HAS_REGISTER_TO_SEND_CODI, false)) {
-                            registerBankAccountCoDi()
-                        }
-                        presenter.onRegisterPhoneSuccess()
+                        //presenter.onRegisterPhoneSuccess()
                     } else {
                         Log.e("CODI", "Error en parámetros de entrada")
                         presenter.onErrorService("Error en registro CoDi")
@@ -215,8 +228,10 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         val hmac = Utils.HmacSha256(App.getPreferences().loadData(CODI_KEYSOURCE).substring(64, 128),
                 App.getPreferences().loadData(PHONE_NUMBER) + App.getPreferences().loadData(CODI_DV))
         /** Generación de request para realizar el Registro por omisión en CoDi para operación No Presencial */
-        val request = RegistroDispositivoPorOmision_Request(App.getPreferences().loadData(PHONE_NUMBER),
-                App.getPreferences().loadData(CODI_DV).toInt(), hmac)
+        val request = RegistroDispositivoPorOmision_Request(
+                App.getPreferences().loadData(PHONE_NUMBER),
+                App.getPreferences().loadData(CODI_DV).toInt(),
+                hmac)
         val text = "d=" + Gson().toJson(request)
         /** Generación de header para indicar que el body es un tipo text/plain */
         val body = RequestBody.create(MediaType.parse("text/plain"), text)
@@ -231,10 +246,12 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
                         Log.e("CODI", "Registro por Omisión Correcto")
                         presenter.onRegisterOmitionSuccess()
                     } else {
-                        Log.e("CODI", "Error en parámetros de entrada")
+                        Log.e("CODI", "Estado de la petición ${response.body()!!.edoPet}\"")
+                        presenter.onErrorService("Error: Estado de la petición ${response.body()!!.edoPet}")
                     }
                 } else {
-                    Log.e("CODI", "Error en servicio http: " + response.code())
+                    Log.e("CODI", "Error en servicio http: ${response.code()}")
+                    presenter.onErrorService("Error en servicio http: ${response.code()}")
                 }
             }
 
@@ -247,7 +264,7 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
     /**
      * Validacion de cuentas
      */
-    private fun registerBankAccountCoDi() {
+    override fun registerBankAccountCoDi() {
         /** Se obtiene el HMAC con la llave de descrifrado por medio del SHA256, y se cifra la concatenación del  número de celular (nc),
          *  código de verificación de registro (dv) completado a 3 dígitos con ceros a la izquierda en caso de ser necesario, la cuenta
          *  configurada para recibir los fondos (cb), el tipo de cuenta (tc) y la clave de la institución bancaria del vendedor (ci) */
@@ -270,14 +287,20 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         API_Banxico().getCustomService().getValidacionCuentasBeneficiarias(body).enqueue(object : Callback<ValidacionCuentasBeneficiarias_Result> {
             override fun onResponse(call: Call<ValidacionCuentasBeneficiarias_Result>, response: Response<ValidacionCuentasBeneficiarias_Result>) {
                 Log.e("CODI", "registerBankAccountCoDi response: "+response.toString())
+                Log.e("CODI", "registerBankAccountCoDi edoPet: "+response.body()!!.edoPet)
                 if (response.code() == HTTP_OK) {
+                    Log.e("CODI", "registerBankAccountCoDi edoPet: "+response.body()!!.edoPet)
                     if (response.body()!!.edoPet == 0) {
                         /* Con esta función, se genera un arreglo de 64 bytes, que se usará de la siguiente manera:
                             ◄ Bytes 0 al 15  Clave de 16 bytes para el algoritmo AES-128 CBC PKCS5 Padding.
                             ◄ Bytes 16 al 31  Arreglo de 16 bytes como vector de inicialización para el modo CBC del algoritmo AES-128 CBC PKCS5 Padding.  */
                         val keySourceAccountValidation = Utils.Sha512Hex(response.body()!!.claveRastreo + App.getPreferences().loadData(CODI_KEYSOURCE))
                         App.getPreferences().saveData(CODI_KEYSOURCE_VALIDATION_ACC, keySourceAccountValidation)
+                        App.getPreferences().saveData(CODI_CLAVE_RASTREO_VAL_CUENTAS, response.body()!!.claveRastreo)
+                        //App.getPreferences().saveDataBool(HAS_REGISTER_TO_SEND_CODI, true)
                         Log.e("CODI", "REGISTRO EXITOSO VALIDACION CUENTAS - Clave de Rastreo: ${response.body()!!.claveRastreo}")
+                        presenter.onValidationSucces("En espera de Push de validación de cuenta", true)
+
                     } else {
                         Log.e("CODI", "Error en parámetros de entrada")
                         presenter.onErrorService("Error en registro CoDi")
@@ -296,7 +319,109 @@ class MainIteractor(val presenter: MainContracts.Presenter) : MainContracts.Iter
         })
     }
 
+
+    override fun consultRegisterBankAccountCoDi() {
+        /** Cadena que resulta de calcular el HMAC-SHA-256-BASE64 de la concatenación del número de celular (nc),
+         * código de verificación de registro (dv) completado a 3 dígitos con ceros a la izquierda en caso de ser necesario
+         * y la clave de rastreo (cr) asignada por Banco de México en el resultado de la invocación del servicio de validación de cuentas. */
+        val hmac_keysource = App.getPreferences().loadData(CODI_KEYSOURCE).substring(64, 128)
+        val hmac = Utils.HmacSha256(hmac_keysource,
+                App.getPreferences().loadData(PHONE_NUMBER) +
+                        App.getPreferences().loadData(CODI_DV) +
+                        App.getPreferences().loadData(CODI_CLAVE_RASTREO_VAL_CUENTAS))
+        /** Creación del objeto request para consulta del estado de la validación de la cuenta*/
+        val request = ConsultaValidacionCuenta_Request(
+                App.getPreferences().loadData(CODI_CLAVE_RASTREO_VAL_CUENTAS),
+                hmac,
+                Beneficiario_Ordenante_Data(App.getPreferences().loadData(PHONE_NUMBER),
+                        App.getPreferences().loadData(CODI_DV).toInt())
+        )
+        val text = "d=" + Gson().toJson(request)
+        Log.e(TAG_CODI, "ConsultaValidacionCuenta_Request: $text")
+        /** Generación de header para indicar que el body es un tipo text/plain */
+        val body = RequestBody.create(MediaType.parse("text/plain"), text)
+        /** Petición al Web Service: [API_Banxico.GetBanxicoService.getConsultaValidacionCuentasBeneficiarias] para
+         * consultar el estado de validar la cuenta con la cual se generaran los mensajes de cobro */
+        API_Banxico().getCustomService().getConsultaValidacionCuentasBeneficiarias(body).enqueue(object : Callback<ConsultaValidacionCuentasBeneficiarias_Result> {
+            override fun onResponse(call: Call<ConsultaValidacionCuentasBeneficiarias_Result>, response: Response<ConsultaValidacionCuentasBeneficiarias_Result>) {
+                Log.e("CODI", "consultRegisterBankAccountCoDi response: "+response.toString())
+                Log.e("CODI", "consultRegisterBankAccountCoDi edoPet: "+response.body()!!.edoPet)
+                if (response.code() == HTTP_OK) {
+                    if (response.body()!!.edoPet == 0) {
+                        /**
+                         * El resultado de la validación de la cuenta beneficiaria (notificación PUSH o
+                         * respuesta del servicio web para consultar el resultado de dicha validación)
+                         * se recibirá codificado en Base64 [infCif] y cifrado mediante el algoritmo AES-128 en modo CBC PKCS5 Padding
+                         * con la misma clave y vector de inicialización indicados en el punto anterior, y una semilla vacía.
+                         */
+                        val dechyperPush = Utils.Aes128CbcPkcs(App.getPreferences().loadData(CODI_KEYSOURCE_VALIDATION_ACC).substring(0, 32),
+                                App.getPreferences().loadData(CODI_KEYSOURCE_VALIDATION_ACC).substring(32, 64), response.body()!!.infCif, Cipher.DECRYPT_MODE)
+                        val data = Gson().fromJson(dechyperPush, ValidacionCuentasDecryp_Data::class.java)
+                        if(data != null) {
+                            Log.e("CODI", "cb: " + data!!.cb)//cuenta bancario
+                            Log.e("CODI", "ci: " + data!!.ci)//clave institucion
+                            Log.e("CODI", "cr: " + data!!.cr)//clave rastreo
+                            Log.e("CODI", "hmac: " + data!!.hmac)//Nombre del beneficiario de la cuenta registrado en CEP
+                            Log.e("CODI", "rv: " + data!!.rv)//Estado de Verif
+                            Log.e("CODI", "tc: " + data!!.tc)//Tipo de cuenta
+                            Log.e("CODI", "dv: " + data!!.ds!!.dv)//digito verificador
+                            Log.e("CODI", "nc: " + data!!.ds!!.nc)//número celulatr
+                        }
+                        when (data.rv) {
+                            0 -> presenter.onValidationSucces("Cuenta pendiente de verificar", true)
+                            1 -> {
+                                App.getPreferences().saveDataBool(HAS_REGISTER_TO_SEND_CODI, true)
+                                presenter.onValidationSucces("Cuenta verificada correctamente", false)
+                            }
+                            3 -> presenter.onValidationSucces("No fue posible realizar la verificación", true)
+                            else -> presenter.onValidationSucces("Error desconocido", true)
+                        }
+
+
+                    } else {
+                        Log.e("CODI", "Error en parámetros de entrada")
+                        presenter.onErrorService("Error en registro CoDi")
+                    }
+                } else {
+                    Log.e("CODI", "Error en servicio http: " + response.code()+ "\n"+
+                            response.toString())
+                    presenter.onErrorService("Error en registro CoDi")
+                }
+            }
+
+            override fun onFailure(call: Call<ConsultaValidacionCuentasBeneficiarias_Result>, t: Throwable) {
+                Log.e("CODI", "Error en servicio http: " + t.stackTrace)
+                presenter.onErrorService("Error en registro CoDi - Validación de cuenta beneficiario: "+t.message)
+            }
+        })
+    }
+
+
+    override fun consultStatusCoDiCharges(npg :Int) {
+        val IDC = App.getPreferences().loadData(CODI_IDC_TYPE19)
+        val codiDecipher = Gson().fromJson(App.getPreferences().loadData(CODI_MSSG_COBRO), CoDi_Decypher::class.java)
+        val request = ConsultPresential_Request(
+                Beneficiario_Ordenante_Data(
+                        codiDecipher.v.dev.split("/")[0],
+                        codiDecipher.v.dev.split("/")[1].toInt()
+                ),
+                Beneficiario_Ordenante_Data(
+                        App.getPreferences().loadData(PHONE_NUMBER),
+                        App.getPreferences().loadData(CODI_DV).toInt()
+                ),
+                IDC,
+                "hmac",
+                100,
+                npg
+
+        )
+
+
+        presenter.onErrorService("not implemented")
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun unsubscribeCodi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

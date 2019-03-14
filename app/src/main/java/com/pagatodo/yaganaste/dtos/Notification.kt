@@ -2,14 +2,17 @@ package com.pagatodo.yaganaste.dtos
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.pagatodo.yaganaste.net.banxico.Comprador_Vendedor_Data
 import com.pagatodo.yaganaste.net.banxico.Mensaje_Cobro_Cifrado_Data
 
-class Notification(@SerializedName("title") val title: String, @SerializedName("body") val body: String,
-                   @SerializedName("info") val notifInfo: Notif_Info?,
-                   @SerializedName("payreq") val payReq: Pay_Req?,
-                   @SerializedName("infoCuenta") val infoCuenta: Info_Cuenta?) : Parcelable {
+class Notification(@SerializedName("title") val title: String,
+                   @SerializedName("body") val body: String,
+                   @SerializedName("info") val info: Notif_Info?, //presencial
+                   @SerializedName("payreq") val payreq: Pay_Req?, //no presencial
+                   @SerializedName("infoCuenta") val infoCuenta: Info_Cuenta? //validación cuenta
+)    : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readString(),
@@ -21,13 +24,17 @@ class Notification(@SerializedName("title") val title: String, @SerializedName("
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
         parcel.writeString(body)
-        parcel.writeParcelable(notifInfo, flags)
-        parcel.writeParcelable(payReq, flags)
+        parcel.writeParcelable(info, flags)
+        parcel.writeParcelable(payreq, flags)
         parcel.writeParcelable(infoCuenta, flags)
     }
 
     override fun describeContents(): Int {
         return 0
+    }
+
+    override fun toString(): String {
+        return Gson().toJson(this)
     }
 
     companion object CREATOR : Parcelable.Creator<Notification> {
@@ -39,35 +46,26 @@ class Notification(@SerializedName("title") val title: String, @SerializedName("
             return arrayOfNulls(size)
         }
     }
+
+
 }
 
-class Notif_Info(@SerializedName("c") val comprador: Comprador_Vendedor_Data, @SerializedName("v") val vendedor: Comprador_Vendedor_Data,
-                 @SerializedName("e") val estadoOperacion: Int, @SerializedName("mt") val monto: Double,
-                 @SerializedName("hp") val hp: Long, @SerializedName("id") val id: String,
-                 @SerializedName("hs") val hs: Long, @SerializedName("dentino") val destino: Int,
-                 @SerializedName("cr") val claveRastreo: String) : Parcelable {
+/**
+ * Notificación de estado de cobro presencial
+ */
+class Notif_Info(
+        @SerializedName("infoCif") val infoCif: Notif_Info_Cif,
+        @SerializedName("xx") val xx : Int //Si se quita causa error overload_resolution_ambiguity
+) : Parcelable{
 
     constructor(parcel: Parcel) : this(
-            parcel.readParcelable(Comprador_Vendedor_Data::class.java.classLoader),
-            parcel.readParcelable(Comprador_Vendedor_Data::class.java.classLoader),
-            parcel.readInt(),
-            parcel.readDouble(),
-            parcel.readLong(),
-            parcel.readString(),
-            parcel.readLong(),
-            parcel.readInt(),
-            parcel.readString())
+            parcel.readParcelable(Notif_Info_Cif::class.java.classLoader),
+            parcel.readInt()) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeParcelable(comprador, flags)
-        parcel.writeParcelable(vendedor, flags)
-        parcel.writeInt(estadoOperacion)
-        parcel.writeDouble(monto)
-        parcel.writeLong(hp)
-        parcel.writeString(id)
-        parcel.writeLong(hs)
-        parcel.writeInt(destino)
-        parcel.writeString(claveRastreo)
+        parcel.writeParcelable(infoCif, flags)
+        parcel.writeInt(xx)
     }
 
     override fun describeContents(): Int {
@@ -83,9 +81,94 @@ class Notif_Info(@SerializedName("c") val comprador: Comprador_Vendedor_Data, @S
             return arrayOfNulls(size)
         }
     }
+
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
 }
 
-class Pay_Req(@SerializedName("infoCif") val infoCif: Mensaje_Cobro_Cifrado_Data, @SerializedName("x") val x: Int?) : Parcelable {
+class Notif_Info_Cif (
+        @SerializedName("id") val id: String,
+        @SerializedName("mc") val mc : String) : Parcelable{
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(mc)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Notif_Info_Cif> {
+        override fun createFromParcel(parcel: Parcel): Notif_Info_Cif {
+            return Notif_Info_Cif(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Notif_Info_Cif?> {
+            return arrayOfNulls(size)
+        }
+    }
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+}
+
+class Notif_Info_Dec(@SerializedName("c") val comprador: Comprador_Vendedor_Data,
+                 @SerializedName("v") val vendedor: Comprador_Vendedor_Data,
+                 @SerializedName("e") val estadoOperacion: Int,
+                 @SerializedName("mt") val monto: Double,
+                 @SerializedName("hp") val hp: Long,
+                 @SerializedName("id") val id: String,
+                 @SerializedName("hs") val hs: Long,
+                 @SerializedName("cr") val claveRastreo: String) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+            parcel.readParcelable(Comprador_Vendedor_Data::class.java.classLoader),
+            parcel.readParcelable(Comprador_Vendedor_Data::class.java.classLoader),
+            parcel.readInt(),
+            parcel.readDouble(),
+            parcel.readLong(),
+            parcel.readString(),
+            parcel.readLong(),
+            parcel.readString())
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(comprador, flags)
+        parcel.writeParcelable(vendedor, flags)
+        parcel.writeInt(estadoOperacion)
+        parcel.writeDouble(monto)
+        parcel.writeLong(hp)
+        parcel.writeString(id)
+        parcel.writeLong(hs)
+        parcel.writeString(claveRastreo)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Notif_Info_Dec> {
+        override fun createFromParcel(parcel: Parcel): Notif_Info_Dec {
+            return Notif_Info_Dec(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Notif_Info_Dec?> {
+            return arrayOfNulls(size)
+        }
+    }
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+}
+
+class Pay_Req(
+        @SerializedName("infoCif") val infoCif: Mensaje_Cobro_Cifrado_Data,
+        @SerializedName("x") val x: Int?) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readParcelable(Mensaje_Cobro_Cifrado_Data::class.java.classLoader),
@@ -109,9 +192,14 @@ class Pay_Req(@SerializedName("infoCif") val infoCif: Mensaje_Cobro_Cifrado_Data
             return arrayOfNulls(size)
         }
     }
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
 }
 
-class Info_Cuenta(@SerializedName("cr") val cr: String, @SerializedName("infCif") val infCif: String) : Parcelable {
+class Info_Cuenta(
+        @SerializedName("cr") val cr: String,
+        @SerializedName("infCif") val infCif: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString())
@@ -133,5 +221,8 @@ class Info_Cuenta(@SerializedName("cr") val cr: String, @SerializedName("infCif"
         override fun newArray(size: Int): Array<Info_Cuenta?> {
             return arrayOfNulls(size)
         }
+    }
+    override fun toString(): String {
+        return Gson().toJson(this)
     }
 }

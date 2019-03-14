@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     tools:context=".modules.main.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +24,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_logo_header" />
+                app:srcCompat="@drawable/ic_logo_header" />
         </androidx.appcompat.widget.Toolbar>
 
         <ImageView
@@ -66,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.9" />
+            app:layout_constraintGuide_percent="0.75" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_recent_movements"
@@ -81,34 +82,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <Button
-            android:id="@+id/btn_send_money"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Enviar"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.705"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline6"
-            app:layout_constraintVertical_bias="0.111" />
+            app:layout_constraintTop_toBottomOf="@+id/rcv_recent_movements">
 
-        <Button
-            android:id="@+id/btn_generate_qr"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:text="Generar QR"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/btn_send_money"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="667dp" />
+            <Button
+                android:id="@+id/btn_send_money"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Enviar" />
+
+            <Button
+                android:id="@+id/btn_generate_qr"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Generar QR"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_consult_validation"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="consultar Validación Cuenta"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_validate_account"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Validar Cuenta (Perfil Vendedor)"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

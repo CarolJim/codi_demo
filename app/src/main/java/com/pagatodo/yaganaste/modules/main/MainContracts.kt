@@ -1,5 +1,6 @@
 package com.pagatodo.yaganaste.modules.main
 
+import android.graphics.pdf.PdfDocument
 import com.pagatodo.network_manager.dtos.sender_yg.results.MovementsItemResult
 
 class MainContracts {
@@ -10,12 +11,16 @@ class MainContracts {
         fun onErrorService(message: String)
         fun showLoader(message: String)
         fun onRegisterCodiSuccess()
-        fun onRegisterPhoneSuccess()
+        fun onRegisterPhoneSuccess(noPresential: Boolean)
         fun onRegisterOmitionSuccess()
         fun onVerifyCode(code: String)
         fun onVerifyPhoneNumber()
         fun onRequiredOmitionRegister()
         fun unregisterReceiver()
+        fun onValidationSucces(mensaje : String, showBtn : Boolean)
+        fun onLogOut()
+        fun onAcceptDefaultRegister()
+        fun onCancelDefaultRegster()
     }
 
     interface Iteractor {
@@ -26,10 +31,15 @@ class MainContracts {
         fun registerDeviceCodi()
         fun registerDeviceOmisionCodi()
         fun unsubscribeCodi()
+        fun consultRegisterBankAccountCoDi()
+        fun registerBankAccountCoDi()
+        fun consultStatusCoDiCharges(page:Int)
+        fun closeSession()
     }
 
     interface Router {
         fun presentSendMoneyScreen()
         fun presentGenerateQrScreen()
+        fun presentConsultValidationScreen()
     }
 }
